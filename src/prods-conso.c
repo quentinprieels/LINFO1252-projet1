@@ -25,7 +25,21 @@ sem_t take_buffer;
 
 // Fonction des consomateur
 void *consomme(void *data) {
-    // TODO: Implement the consumer function
+    while (true) { // TODO: Change the while condition to avoid the infinite loop
+        
+        // Création de l'entier à placer dans le buffer
+        int to_put = 1;
+
+        // Placement dans le buffer 
+        // TODO: Add the error mechanism
+        sem_wait(&put_buffer);
+        pthread_mutex_lock(&buffer_mutex);
+
+        // TODO: Put the integer value into the buffer
+
+        pthread_mutex_unlock(&buffer_mutex);
+        sem_post(&take_buffer);
+    }
 }
 
 // Fonction des producteurs
@@ -52,7 +66,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // Initialisation du buffer et de son mutex et de ses sémaphores
+    // Initialisation du buffer et de son mutex
     buf = (int *) malloc(buffer_size * sizeof(int));
     if (buf == NULL) {
         printf("Erreur lors de la creation (malloc) du buffer.");
@@ -62,7 +76,17 @@ int main(int argc, char *argv[]) {
         printf("Erreur lors de l'initalisation du mutex buffer.");
         exit(EXIT_FAILURE);
     }
-    // TODO: Initialiser les sémaphores
+
+    // Initialiser les sémaphores
+    if (sem_init(&put_buffer, NULL, buffer_size) == NULL) {
+        printf("Erreur lors de l'initialisation du sémaphore put");
+        exit(EXIT_FAILURE);
+    }
+    if (sem_init(&take_buffer, NULL, 0) == NULL) {
+        printf("Erreur lors de l'initialisation du sémaphore take");
+        exit(EXIT_FAILURE);
+    }
+
 
     // TODO: Créer les threads, join et puis réaliser tout les destroys et free nécessaires
 
