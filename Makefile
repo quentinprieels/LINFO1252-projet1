@@ -17,8 +17,7 @@ debug_philo: src/philosophes.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
 	gdb --args bins/philosophes $(PHILO-THREADS)
 
-pdf: report/compile.sh
-	sh report/compile.sh
+pdf: # TDOO : compile the report with the bash sript into the report/ folder
 
 clean:
 	@rm -f bins/*.o
