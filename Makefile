@@ -10,10 +10,11 @@ PRODUCER-THREADS = 10
 CONSUMER-THREADS = 10
 
 # Rules
-philo: src/philosophes.c performances/time_measures.sh
+philo: src/philosophes.c performances/time_measures.sh performances/plot_measures.py
 	@$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
 	@echo "Compilation of philosophers done, beginning the measures."
 	@./performances/time_measures.sh philosophes.csv bins/philosophes
+	@python3 performances/plot_measures.py performances/philosophes.csv philosophes.pdf
 
 debug_philo: src/philosophes.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
@@ -31,9 +32,7 @@ pdf: # TDOO : compile the report with the bash sript into the report/ folder
 
 clean:
 	@rm -f bins/*
-	@rm -f bins/*.o
+	@rm -f *.o
 	@rm -f *.log
-
-clean_result:
 	@rm -f performances/*.csv
-	@rm -f performances/*.pdf
+	@rm -f performances/*.pdf	

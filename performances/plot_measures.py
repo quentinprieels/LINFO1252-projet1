@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-TODO: Faire la desciption du programme
+This script plots the measures of the performances of a model.
+
+USAGE:   python3 plot_measures.py <performance_file> <output_file>
+EXAMPLE: python3 plot_measures.py performance.csv performance.pdf
+
+DESCRIPTION:    This script will analyze the performance file and plot the mean, max and min of the measures.
+                To generate the performance file, use the script performances/timeseries_measures.sh
+                The output file will be a file containing the plot (the extentions type must be given).
 """
-
-
 import sys
-import numpy as np
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -15,7 +20,6 @@ filename = sys.argv[1]
 name = sys.argv[2]
 
 df = pd.read_csv(filename, sep=',')
-print(df)
 
 # For each thread number, compute the mean, the max and the min values
 df['means'] = df.drop('nbr_threads', axis=1).mean(axis=1)
@@ -29,7 +33,7 @@ plt.errorbar(df['nbr_threads'], df['means'], yerr=[df['means']-df['min'], df['ma
 plt.xlabel('Number of threads')
 plt.ylabel('Time (s)')
 plt.grid(True)
+plt.savefig(name)
 
-plt.savefig(name + '.pdf')
-
-print(df)
+# Move the file to the performances folder
+os.system('mv ' + name + ' performances/')
