@@ -49,7 +49,7 @@ void* philosophe (void *arg) {
 
 int main(int argc, char *argv[]) {
     // Récupérer le nombre de philosophes
-    if (argc != 2) {
+    if (argc != 2 && argc != 3) { // On ajoute la possibilité de donner un 2e argument qui ne sera pas pris en compte (simplifier les scripts de mesure du temps)
         printf("Vous n'avez pas donné un seul argument correspondant au nombre de philosophe.\n");
         exit(EXIT_FAILURE);
     }
