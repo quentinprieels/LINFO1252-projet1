@@ -46,9 +46,9 @@ fi
 
 
 # ==========    Prepare file    ==========
-echo -n "Number of threads" > $FILE
+echo -n "nbr_threads" > $FILE
 for i in $(seq 1 $NBR_MEASURES); do
-    echo -n ",run ${i}" >> $FILE
+    echo -n ",run_${i}" >> $FILE
     if [ $i -eq $NBR_MEASURES ]; then
         echo "" >> $FILE
     fi

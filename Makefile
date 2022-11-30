@@ -34,5 +34,6 @@ clean:
 	@rm -f bins/*.o
 	@rm -f *.log
 
-clean_time:
+clean_result:
 	@rm -f performances/*.csv
+	@rm -f performances/*.pdf
