@@ -13,7 +13,7 @@
 # ================================================================================================================================
 
 NBR_MEASURES=5
-NBR_MIN_THREAD=2
+NBR_MIN_THREAD=2  # TODO: Normaly, it should be 1, but the program is 'philosophes' need a least 2 threads to run.
 
 FILE=$1
 PROGRAM=$2
@@ -64,4 +64,6 @@ for i in $(seq $NBR_MIN_THREAD $NBR_THREAD); do
     echo "" >> $FILE
 done
 
+# ==========    Clear the output    ==========
+mv $FILE performances/$FILE
 exit 0
