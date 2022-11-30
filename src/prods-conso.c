@@ -4,51 +4,76 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <semaphore.h>
+#include "buffer.h"
 
 // Threads
-int nbr_consos;
-int nbr_prods;
-pthread_t *conomateurs;
+int nbr_conso;
+int nbr_prod;
+pthread_t *consomateurs;
 pthread_t *producteurs;
 
 // Counter
 int max_count = 8192;
-volatile int count = 0; // Variable volatile pour éviter la mise en cache (non visible par les autres producteurs)
-pthread_mutex_t count_mutex;
 
 // Buffer
-int buffer_size = 8;
-int *buf;
+buffer_t *buffer;
 pthread_mutex_t buffer_mutex;
-sem_t put_buffer;
-sem_t take_buffer;
+sem_t empty_buffer;
+sem_t full_buffer;
 
-// Fonction des consomateur
+
+// Fonction des consomateurs
 void *consomme(void *data) {
-    while (true) { // TODO: Change the while condition to avoid the infinite loop
-        
-        // Création de l'entier à placer dans le buffer
-        int to_put = 1;
+    int count = *((int *) data);
 
-        // Placement dans le buffer 
+    while(count != 0) {
+        // Take an item into the buffer
         // TODO: Add the error mechanism
-        sem_wait(&put_buffer);
+        sem_wait(&full_buffer);
         pthread_mutex_lock(&buffer_mutex);
-
-        // TODO: Put the integer value into the buffer
-
+        
+        int *removed = get(buffer);
+        
         pthread_mutex_unlock(&buffer_mutex);
-        sem_post(&take_buffer);
-    }
+        sem_post(&empty_buffer);
+
+        // Simulation d'un traitement
+        for (int i = 0; i < 10000; i++);
+        free(removed);
+
+        count--;
+    } 
+    
+    return 0;
 }
 
 // Fonction des producteurs
 void *produit(void *data) {
-    // TODO: Implement the producer function
+    int count = *((int *) data);
 
-    // Simulation d'un traitement
-    for (int i = 0; i < 10000; i++);
-    
+    while (count != 0) {
+
+        // Simulation d'un traitement
+        for (int i = 0; i < 10000; i++);
+        
+        // Création de l'entier à placer dans le buffer
+        int *to_put = (int *) malloc(sizeof(int));
+        *to_put = 1;
+
+        // Placement dans le buffer 
+        // TODO: Add the error mechanism
+        sem_wait(&empty_buffer);
+        pthread_mutex_lock(&buffer_mutex);
+
+        put(buffer, to_put);
+
+        pthread_mutex_unlock(&buffer_mutex);
+        sem_post(&full_buffer);
+
+        count--;
+    }
+
+    return 0;
 }
 
 // Main program
@@ -57,18 +82,13 @@ int main(int argc, char *argv[]) {
         printf("Vous n'avez pas entré le bon nombre (2) d'arguments (le nombre de threads consomateur et le nombre de threads producteurs).");
         exit(EXIT_FAILURE);
     }
-    nbr_consos = atoi(argv[1]);
-    nbr_prods = atoi(argv[2]);
-
-    // Initilisation du compteur
-    if (pthread_mutex_init(&count_mutex, NULL) != 0) {
-        printf("Erreur lors de l'initilisation du mutex compteur.");
-        exit(EXIT_FAILURE);
-    }
+    nbr_conso = atoi(argv[1]);
+    nbr_prod = atoi(argv[2]);
 
     // Initialisation du buffer et de son mutex
-    buf = (int *) malloc(buffer_size * sizeof(int));
-    if (buf == NULL) {
+    buffer = malloc_buffer(8);
+
+    if (buffer->buffer == NULL) {
         printf("Erreur lors de la creation (malloc) du buffer.");
         exit(EXIT_FAILURE);
     }
@@ -78,17 +98,67 @@ int main(int argc, char *argv[]) {
     }
 
     // Initialiser les sémaphores
-    if (sem_init(&put_buffer, NULL, buffer_size) == NULL) {
+    if (sem_init(&empty_buffer, 0, 8) == -1) {
         printf("Erreur lors de l'initialisation du sémaphore put");
         exit(EXIT_FAILURE);
     }
-    if (sem_init(&take_buffer, NULL, 0) == NULL) {
+    if (sem_init(&full_buffer, 0, 0) == -1) {
         printf("Erreur lors de l'initialisation du sémaphore take");
         exit(EXIT_FAILURE);
     }
 
+    // Calcule du nombre d'éléments que chaque thread doit traiter
+    int to_compute_conso = max_count / nbr_conso;
+    int rest_compute_conso = max_count - (to_compute_conso * nbr_conso) + to_compute_conso;
+    int to_compute_prod = max_count / nbr_prod;
+    int rest_compute_prod = max_count - (to_compute_prod * nbr_prod) + to_compute_prod;
 
-    // TODO: Créer les threads, join et puis réaliser tout les destroys et free nécessaires
+    // Creation des threads produteurs
+    pthread_t producteurs[nbr_prod];
+    if (pthread_create(&producteurs[0], NULL, produit, &rest_compute_prod) != 0) {
+        fprintf(stderr, "Erreur lors de la creation d'un tread producteurs.\n");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 1; i < nbr_prod; i++) {
+        if (pthread_create(&producteurs[i], NULL, produit, &to_compute_prod) != 0) {
+            fprintf(stderr, "Erreur lors de la creation d'un tread producteurs.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // Création des threads consomateurs
+    pthread_t consomateurs[nbr_conso];
+    if (pthread_create(&consomateurs[0], NULL, consomme, &rest_compute_conso) != 0) {
+        fprintf(stderr, "Erreur lors de la creation d'un tread consomateurs.\n");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 1; i < nbr_conso; i++) {
+        if (pthread_create(&consomateurs[i], NULL, consomme, &to_compute_conso) != 0) {
+            fprintf(stderr, "Erreur lors de la creation d'un tread consomateurs.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // Join sur tout les threads
+    for (int i = 0; i < nbr_prod; i++) {
+        if (pthread_join(producteurs[i], NULL) != 0) {
+			fprintf(stderr, "Erreur lors de la terminaison d'un producteurs.\n");
+			exit(EXIT_FAILURE);
+		}
+    }
+    for (int i = 0; i < nbr_prod; i++) {
+        if (pthread_join(consomateurs[i], NULL) != 0) {
+			fprintf(stderr, "Erreur lors de la terminaison d'un consomateurs.\n");
+			exit(EXIT_FAILURE);
+		}
+    }
+    
+    // Free and destroy
+    free_buffer(buffer);
+    // TODO: Implement the error mechanism
+    pthread_mutex_destroy(&buffer_mutex);
+    sem_destroy(&empty_buffer);
+    sem_destroy(&full_buffer);
 
     exit(EXIT_SUCCESS);
 }

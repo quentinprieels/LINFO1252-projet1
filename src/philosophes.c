@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+// 10.000.000 if tested onto own computer - 100.000 on Inginious
 #define CYCLES 100000
 
 // Variables gloables - permet de partage des données entre les treads 
