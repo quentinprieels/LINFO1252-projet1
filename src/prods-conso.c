@@ -153,8 +153,10 @@ int main(int argc, char *argv[]) {
 		}
     }
     
-    // Free and destroy
+    // Free
     free_buffer(buffer);
+
+    // Destroy mutex and semaphore
     // TODO: Implement the error mechanism
     pthread_mutex_destroy(&buffer_mutex);
     sem_destroy(&empty_buffer);
