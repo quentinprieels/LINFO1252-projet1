@@ -14,7 +14,7 @@ int *ids; // Numéros des philosphes;
 
 /* Fonction philosophe
    Chaque philosophe prend les baguettes qui se trouve à sa gauche et à sa droite. Il peut ensuite
-   manger, relacher les baguettes et pener apres. Il execute cette suite d'actions un nombre
+   manger, relacher les baguettes et penser apres. Il execute cette suite d'actions un nombre
    CYCLES de fois. 
 */
 void* philosophe (void *arg) {
