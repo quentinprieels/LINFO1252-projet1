@@ -25,6 +25,7 @@ producer: src/prods-conso.c
 	cppcheck src/prods-conso.c
 
 pdf: # TDOO : compile the report with the bash sript into the report/ folder
+	./report/compile.sh
 
 clean:
 	@rm -f bins/*.o
