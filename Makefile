@@ -22,10 +22,18 @@ debug_philo: src/philosophes.c
 	valgrind ./bins/philosophes $(PHILO-THREADS)
 	cppcheck src/philosophes.c
 
-producer: src/prods-conso.c
-	$(CC) $(CFLAGS) $(THREADS) -o bins/prods-conso src/prods-conso.c src/buffer.c
-	valgrind ./bins/prods-conso $(CONSUMER-THREADS) $(PRODUCER-THREADS)
-	cppcheck src/prods-conso.c
+prod_cons: src/producer_consumer.c performances/time_measures.sh performances/plot_measures.py
+	@$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer src/producer_consumer.c src/buffer.c
+	@echo "Compilation of producer_consumer done, beginning the measures."
+	@./performances/time_measures.sh producer_consumer.csv bins/producer_consumer
+	@python3 performances/plot_measures.py performances/producer_consumer.csv producer_consumer.pdf
+
+debug_prod_cons: src/producer_consumer.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer src/producer_consumer.c
+	gdb --args bins/producer_consumer $(PRODUCER-THREADS) $(CONSUMER-THREADS)
+	valgrind ./bins/producer_consumer $(PRODUCER-THREADS) $(CONSUMER-THREADS)
+	cppcheck src/producer_consumer.c
+
 
 pdf: # TDOO : compile the report with the bash sript into the report/ folder
 	./report/compile.sh
