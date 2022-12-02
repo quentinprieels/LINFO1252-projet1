@@ -11,7 +11,6 @@ DESCRIPTION:    This script will analyze the performance file and plot the mean 
                 The output file will be a file containing the plot (the extentions type must be given).
 """
 import sys
-import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -31,7 +30,4 @@ plt.errorbar(df['nbr_threads'], df['means']*1000, yerr=df['stds']*1000, ecolor='
 plt.xlabel('Number of threads')
 plt.ylabel('Time [ms]')
 plt.grid(True)
-plt.savefig(name)
-
-# Move the file to the performances folder
-os.system('mv ' + name + ' performances/')
+plt.savefig('performances/' + name)

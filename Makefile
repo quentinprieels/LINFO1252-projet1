@@ -12,6 +12,8 @@ WRITER-THREADS = 10
 READERS-THREADS = 10
 
 # Rules
+task1: philo prod_cons read_write
+
 philo: src/philosophes.c performances/time_measures.sh performances/plot_measures.py
 	@$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
 	@echo "Compilation of philosophers done, beginning the measures."
@@ -37,7 +39,7 @@ debug_prod_cons: src/producer_consumer.c
 	cppcheck src/producer_consumer.c
 
 read_write: src/reader_writer.c performances/time_measures.sh performances/plot_measures.py
-	@$(CC) $(CFLAGS) $(THREADS) - bins/reader_writer src/reader_writer.c
+	@$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
 	@echo "Compilation of reader_writer done, beginning the measures."
 	@./performances/time_measures.sh reader_writer.csv bins/reader_writer
 	@python3 performances/plot_measures.py performances/reader_writer.csv reader_writer.pdf

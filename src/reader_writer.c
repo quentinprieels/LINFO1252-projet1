@@ -48,6 +48,8 @@ void *writes(void *data) {
         if (writercount == 0) {sem_post(&rsem);} // départ du dernier writer
         pthread_mutex_unlock(&m_wcount);
     }
+
+    return 0;
 }
 
 // Reader function
@@ -82,6 +84,8 @@ void *reads(void *data) {
         // simule processing the data
         for (int i=0; i<10000; i++);
     }
+
+    return 0;
 }
 
 int main(int argc, char const *argv[]){
