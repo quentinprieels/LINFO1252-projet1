@@ -8,6 +8,8 @@ TESTS = -lcuint
 PHILO-THREADS = 100
 PRODUCER-THREADS = 10
 CONSUMER-THREADS = 10
+WRITER-THREADS = 10
+READERS-THREADS = 10
 
 # Rules
 philo: src/philosophes.c performances/time_measures.sh performances/plot_measures.py
@@ -34,6 +36,17 @@ debug_prod_cons: src/producer_consumer.c
 	valgrind ./bins/producer_consumer $(PRODUCER-THREADS) $(CONSUMER-THREADS)
 	cppcheck src/producer_consumer.c
 
+read_write: src/reader_writer.c performances/time_measures.sh performances/plot_measures.py
+	@$(CC) $(CFLAGS) $(THREADS) - bins/reader_writer src/reader_writer.c
+	@echo "Compilation of reader_writer done, beginning the measures."
+	@./performances/time_measures.sh reader_writer.csv bins/reader_writer
+	@python3 performances/plot_measures.py performances/reader_writer.csv reader_writer.pdf
+
+debug_read_write: src/reader_writer.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
+	gdb --args bins/reader_writer $(WRITER-THREADS) $(READERS-THREADS)
+	valgrind ./bins/reader_writer $(WRITER-THREADS) $(READERS-THREADS)
+	cppcheck src/reader_writer.c
 
 pdf: # TDOO : compile the report with the bash sript into the report/ folder
 	./report/compile.sh
