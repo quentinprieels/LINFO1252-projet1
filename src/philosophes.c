@@ -55,6 +55,11 @@ int main(int argc, char *argv[]) {
     }
     nbr_philosophes = atoi(argv[1]);
 
+    // TODO: Check if this solution is correct for this special case
+    if (nbr_philosophes < 2) {
+        exit(EXIT_SUCCESS);
+    }
+
     // Initialisation des baguettes
     baguette = (pthread_mutex_t *) malloc(nbr_philosophes * sizeof(pthread_mutex_t));
     if (baguette == NULL) {
