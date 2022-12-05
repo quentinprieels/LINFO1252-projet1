@@ -36,48 +36,48 @@ void *writes(void *data){
         // modification du nombre de writers actifs
         // section critique donc on lock
         if(pthread_mutex_lock(&m_wcount)){
-            printf("Error");
+            printf("Error : failed to lock wcount");
             exit(EXIT_FAILURE);
         }
         writercount++;
         if (writercount == 1){ // premier writer --> on bloque les readers
             if (sem_wait(&rsem)){
-                printf("Error");
+                printf("Error : failed to sem_wait rsem");
                 exit(EXIT_FAILURE);
             }
         }
         if(pthread_mutex_unlock(&m_wcount)){
-            printf("Error");
+            printf("Error : failed to unlock wcount");
             exit(EXIT_FAILURE);
         }
         // fin de la section critique
 
         // Un seul writer peut écrire à la fois donc on met un sémaphore
         if (sem_wait(&wsem)){
-            printf("Error");
+            printf("Error : failed to sem_wait wsem");
             exit(EXIT_FAILURE);
         }
         // écriture dans la base de donnée (instantané)
         if (sem_post(&wsem)){
-            printf("Error");
+            printf("Error : failed to sem_post wsem");
             exit(EXIT_FAILURE);
         }
 
         // modification du nombre de writer actifs
         // section critique donc on lock
         if(pthread_mutex_lock(&m_wcount)){
-            printf("Error");
+            printf("Error : failed to lock wcount");
             exit(EXIT_FAILURE);
         }
         writercount--;
         if (writercount == 0){ // dernier writer --> on libère les readers
             if (sem_post(&rsem)){
-                printf("Error");
+                printf("Error : failed to sem_post rsem");
                 exit(EXIT_FAILURE);
             }
         }
         if(pthread_mutex_unlock(&m_wcount)){
-            printf("Error");
+            printf("Error : failed to unlock wcount");
             exit(EXIT_FAILURE);
         }
         // fin de la section critique
@@ -94,45 +94,45 @@ void *reads(void *data){
 
         // protège rsem
         if (pthread_mutex_lock(&m_wsecurity)){
-            printf("Error");
+            printf("Error : failed to lock wsecurity");
             exit(EXIT_FAILURE);      
         }
 
         // on vérifie qu'aucun reader n'est en train d'être créé 
         // ni qu'aucun writer n'est occupé d'écrire
         if (sem_wait(&rsem)){
-            printf("Error");
+            printf("Error : failed to sem_wait rsem");
             exit(EXIT_FAILURE);
         }
 
         // modification du nombre de readers actifs
         // section critique donc on lock
         if(pthread_mutex_lock(&m_rcount)){
-            printf("Error");
+            printf("Error : failed to lock rcount");
             exit(EXIT_FAILURE);
         }
         readercount++;
         if (readercount == 1){ // premier reader --> on bloque les writers
             if (sem_wait(&wsem)){
-                printf("Error");
+                printf("Error : failed to sem_wait wsem");
                 exit(EXIT_FAILURE);
             }
         }
         if(pthread_mutex_unlock(&m_rcount)){
-            printf("Error");
+            printf("Error : failed to unlock rcount");
             exit(EXIT_FAILURE);
         }
         // fin de la section critique
 
         // libère le prochain reader ou writer
         if (sem_post(&rsem)){
-            printf("Error");
+            printf("Error : failed to sem_post rsem");
             exit(EXIT_FAILURE);
         }
 
         // plus d'interraction avec rsem, on peut le unlock
         if (pthread_mutex_unlock(&m_wsecurity)){
-            printf("Error");
+            printf("Error : failed to unlock wsecurity");
             exit(EXIT_FAILURE);      
         }
 
@@ -141,18 +141,18 @@ void *reads(void *data){
         // modification du nombre de readers actifs
         // section critique donc on lock
         if(pthread_mutex_lock(&m_rcount)){
-            printf("Error");
+            printf("Error : failed to lock rcount");
             exit(EXIT_FAILURE);
         }
         readercount--;
         if (readercount == 0){ // dernier reader --> on libère les writers
             if (sem_post(&wsem)){
-                printf("Error");
+                printf("Error : failed to sem_post wsem");
                 exit(EXIT_FAILURE);
             }
         }
         if(pthread_mutex_unlock(&m_rcount)){
-            printf("Error");
+            printf("Error : failed to unlock rcount");
             exit(EXIT_FAILURE);
         }
         // fin de la section critique
