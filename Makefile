@@ -1,7 +1,7 @@
 # Compilation variable
 CC = gcc
 CFLAGS = -Wall -Werror -g
-THREADS = -lpthread
+THREADS = -lpthread -pthread
 TESTS = -lcuint
 
 # Programs arguments
