@@ -15,24 +15,24 @@ READERS-THREADS = 10
 compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer src/producer_consumer.c src/buffer.c
-	# $(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
 
 # Make local tests and graphs
 local: performances/time_measures.sh performances/plot_measures.py
 	@make compile -s
 	@echo "Compilation done."
 
-	@echo "Lauching local measure for philosophers."
+	@echo "Launching local measure for philosophers."
 	@./performances/time_measures.sh philosophes.csv bins/philosophes
 	@python3 performances/plot_measures.py performances/philosophes.csv philosophes.pdf
 
-	@echo "Lauching local measure for producer_consumer."
+	@echo "Launching local measure for producer_consumer."
 	@./performances/time_measures.sh producer_consumer.csv bins/producer_consumer
 	@python3 performances/plot_measures.py performances/producer_consumer.csv producer_consumer.pdf
 
-	# @echo "Lauching local measure for reader_writer."
-	# @./performances/time_measures.sh producer_consumer.csv bins/producer_consumer
-	# @python3 performances/plot_measures.py performances/producer_consumer.csv producer_consumer.pdf
+	@echo "Launching local measure for reader_writer."
+	@./performances/time_measures.sh reader_writer.csv bins/reader_writer
+	@python3 performances/plot_measures.py performances/reader_writer.csv reader_writer.pdf
 
 # Debugging
 debug_philo: src/philosophes.c

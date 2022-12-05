@@ -5,10 +5,10 @@
 #include <unistd.h>
 #include <semaphore.h>
 
-// Initilisation
+// Initialisation
 
-#define towrite_max 2560
-#define toread_max 860
+#define towrite_tot 2560
+#define toread_tot 860
 
 int nbr_writers;
 int nbr_readers;
@@ -16,6 +16,9 @@ int nbr_readers;
 pthread_mutex_t m_wcount;
 pthread_mutex_t m_rcount;
 pthread_mutex_t m_wsecurity;
+// security est là pour empêcher des readers de s'accumuler sur rsem.
+// De cette manière, quand un writer arrive il n'y ait qu'un lecteur d'occupé.
+// Autrement dit, donne + de poids au writer
 
 sem_t wsem;  // bloque les writers
 sem_t rsem;  // bloque les readers
@@ -23,74 +26,140 @@ sem_t rsem;  // bloque les readers
 int writercount = 0; // nombre de writers actifs
 int readercount = 0; // nombre de readers actifs
 
-// Writer function
 void *writes(void *data){
-    int count = *(int *) data;
+    int count = *(int *)data;
+    while(count > 0){
 
-    while(count != 0){
-
-        // simule la préparation du data
+        // simule la préparation des données à écrire
         for (int i=0; i<10000; i++);
-
-        // section critique donc on lock
-        pthread_mutex_lock(&m_wcount);
-        writercount++;
-        if (writercount == 1){sem_wait(&rsem);} // arrivée du premier writer --> bloque l'accès aux prochains readers
-        pthread_mutex_unlock(&m_wcount);
         
-        // un seul writer peut écrire à la fois
-        sem_wait(&wsem);
-        // écrire dans la database --> instantané
-        sem_post(&wsem);
-
+        // modification du nombre de writers actifs
         // section critique donc on lock
-        pthread_mutex_lock(&m_wcount);
+        if(pthread_mutex_lock(&m_wcount)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
+        writercount++;
+        if (writercount == 1){ // premier writer --> on bloque les readers
+            if (sem_wait(&rsem)){
+                printf("Error");
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(pthread_mutex_unlock(&m_wcount)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
+        // fin de la section critique
+
+        // Un seul writer peut écrire à la fois donc on met un sémaphore
+        if (sem_wait(&wsem)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
+        // écriture dans la base de donnée (instantané)
+        if (sem_post(&wsem)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
+
+        // modification du nombre de writer actifs
+        // section critique donc on lock
+        if(pthread_mutex_lock(&m_wcount)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
         writercount--;
-        if (writercount == 0){sem_post(&rsem);} // départ du dernier writer --> libère l'accès pour les prochains readers
-        pthread_mutex_unlock(&m_wcount);
+        if (writercount == 0){ // dernier writer --> on libère les readers
+            if (sem_post(&rsem)){
+                printf("Error");
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(pthread_mutex_unlock(&m_wcount)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
+        // fin de la section critique
 
         count--;
     }
-
-    return 0;
+    return NULL;
 }
 
-// Reader function
 void *reads(void *data){
     int count = *(int *) data;
 
-    while(count != 0){    
+    while(count > 0){
 
-        // lock pour empêcher des readers de s'accumuler sur rsem
-        // pour que quand un writer arrive il n'y ait qu'un lecteur d'occupé.
-        // autrement dit, donne + de poids au writer
-        pthread_mutex_lock(&m_wsecurity);
-        sem_wait(&rsem);
+        // protège rsem
+        if (pthread_mutex_lock(&m_wsecurity)){
+            printf("Error");
+            exit(EXIT_FAILURE);      
+        }
 
+        // on vérifie qu'aucun reader n'est en train d'être créé 
+        // ni qu'aucun writer n'est occupé d'écrire
+        if (sem_wait(&rsem)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
+
+        // modification du nombre de readers actifs
         // section critique donc on lock
-        pthread_mutex_lock(&m_rcount);
+        if(pthread_mutex_lock(&m_rcount)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
         readercount++;
-        if (readercount==1){sem_wait(&wsem);} // arrivée du premier reader --> bloque l'accès aux prochains writers
-        pthread_mutex_unlock(&m_rcount);
+        if (readercount == 1){ // premier reader --> on bloque les writers
+            if (sem_wait(&wsem)){
+                printf("Error");
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(pthread_mutex_unlock(&m_rcount)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
+        // fin de la section critique
 
-        sem_post(&rsem);
-        pthread_mutex_unlock(&m_wsecurity);
+        // libère le prochain reader ou writer
+        if (sem_post(&rsem)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
 
-        // lire la database --> instantané
-        
+        // plus d'interraction avec rsem, on peut le unlock
+        if (pthread_mutex_unlock(&m_wsecurity)){
+            printf("Error");
+            exit(EXIT_FAILURE);      
+        }
+
+        // lecture de la base de donnée (instantané)
+
+        // modification du nombre de readers actifs
         // section critique donc on lock
-        pthread_mutex_lock(&m_rcount);
+        if(pthread_mutex_lock(&m_rcount)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
         readercount--;
-        if(readercount==0){sem_post(&wsem);} // départ du dernier reader --> libère l'accès pour les prochains writers
-        pthread_mutex_unlock(&m_rcount);
-        
-        // simule utiliser le data
-        for (int i=0; i<10000; i++);
+        if (readercount == 0){ // dernier reader --> on libère les writers
+            if (sem_post(&wsem)){
+                printf("Error");
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(pthread_mutex_unlock(&m_rcount)){
+            printf("Error");
+            exit(EXIT_FAILURE);
+        }
+        // fin de la section critique
 
         count--;
     }
-
-    return 0;
+    return NULL;
 }
 
 int main(int argc, char const *argv[]){
@@ -127,8 +196,8 @@ int main(int argc, char const *argv[]){
     }
 
     //initialiser les writers
-    int towrite = towrite_max / nbr_writers;
-    int first_towrite = toread_max - (towrite * nbr_writers ) + nbr_writers;
+    int towrite = towrite_tot / nbr_writers;
+    int first_towrite = toread_tot - (towrite * nbr_writers ) + nbr_writers;
 
     pthread_t writers[nbr_writers];
     if (pthread_create(&writers[0], NULL, writes, &first_towrite) != 0){
@@ -143,8 +212,8 @@ int main(int argc, char const *argv[]){
     }
 
     //initialiser les readers
-    int toread = toread_max / nbr_readers;
-    int first_toread = toread_max - toread * (nbr_readers) + nbr_readers;
+    int toread = toread_tot / nbr_readers;
+    int first_toread = toread_tot - toread * (nbr_readers) + nbr_readers;
     
     pthread_t readers[nbr_readers];
     if (pthread_create(&readers[0], NULL, reads, &first_toread) != 0){
@@ -196,7 +265,7 @@ int main(int argc, char const *argv[]){
     if (sem_destroy(&rsem) == -1){
         printf("Erreur lors de la suppression du sémaphore des readers");
         exit(EXIT_FAILURE);
-    }
+    }   
 
     exit(EXIT_SUCCESS);
 }
