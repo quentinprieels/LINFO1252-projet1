@@ -53,13 +53,18 @@ debug_read_write: src/reader_writer.c
 	valgrind ./bins/reader_writer $(WRITER-THREADS) $(READERS-THREADS)
 	cppcheck src/reader_writer.c
 
+
+debug_latch: src/latch.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/latch src/latch.c
+	./bins/latch
+
 # Compile the pdf report
 pdf: report/compile.sh
 	./report/compile.sh
 
 # Make zip for inginious tests
 zip:
-	@ zip -r project.zip . -x "*.git*" -x "*.pdf" -x"*.md" -x "*.code-workspace" -x "*.cls" -x "*.tex" -x "inginious/" -x ".vscode/" -x "project.zip*" -x "create_zip.sh*"
+	@ zip -r project.zip . -x "*.git*" -x "*.pdf" -x"*.md" -x "*.code-workspace" -x "project.zip*" -x "create_zip.sh*" -x "report/*" -x "inginious/*" -x ".vscode/*"
 
 # Clean the project
 clean:

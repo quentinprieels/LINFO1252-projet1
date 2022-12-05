@@ -12,7 +12,7 @@ make compile -s
 # Collect the time for task 1
 ./performances/time_measures.sh philosophes_ingi.csv bins/philosophes
 ./performances/time_measures.sh producer_consumer_ingi.csv bins/producer_consumer
-# ./performances/time_measures.sh reader_writer_ingi.csv bins/reader_writer
+./performances/time_measures.sh reader_writer_ingi.csv bins/reader_writer
 
 # Print CSV files in the 
 echo "philosophes_ingi.csv"
@@ -23,8 +23,8 @@ echo "producer_consumer_ingi.csv"
 cat performances/producer_consumer_ingi.csv
 echo ""
 
-# echo "reader_writer_ingi.csv"
-# cat performances/reader_writer_ingi.csv
+echo "reader_writer_ingi.csv"
+cat performances/reader_writer_ingi.csv
 echo ""
 
 # Clean all files
