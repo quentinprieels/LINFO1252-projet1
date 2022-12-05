@@ -9,7 +9,7 @@
 # Compile the program
 make compile -s
 
-# Collect the time
+# Collect the time for task 1
 ./performances/time_measures.sh philosophes_ingi.csv bins/philosophes
 ./performances/time_measures.sh producer_consumer_ingi.csv bins/producer_consumer
 # ./performances/time_measures.sh reader_writer_ingi.csv bins/reader_writer
@@ -18,10 +18,14 @@ make compile -s
 echo "philosophes_ingi.csv"
 cat performances/philosophes_ingi.csv
 echo ""
+
 echo "producer_consumer_ingi.csv"
 cat performances/producer_consumer_ingi.csv
+echo ""
+
 # echo "reader_writer_ingi.csv"
 # cat performances/reader_writer_ingi.csv
+echo ""
 
 # Clean all files
 make clean -s
