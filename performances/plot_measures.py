@@ -25,9 +25,19 @@ df['means'] = df.drop('nbr_threads', axis=1).mean(axis=1)
 df['stds'] = df.drop('nbr_threads', axis=1).std(axis=1)
 
 # Plot the results
-plt.figure()
-plt.errorbar(df['nbr_threads'], df['means']*1000, yerr=df['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1,)
-plt.xlabel('Number of threads')
+# Create figure
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+
+# Type of plot
+plt.errorbar(df['nbr_threads'], df['means']*1000, yerr=df['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1)
+ax.set_xscale('log', base=2)
+ax.set_ylim(bottom=-5)
+# plt.boxplot(df.drop('nbr_threads', axis=1).T, sym="", labels=df['nbr_threads'])
+# plt.violinplot(df.drop('nbr_threads', axis=1).T, showmeans=True, showmedians=False, showextrema=False)
+
+# Plot parameters
+plt.xlabel('Number of threads [#]')
 plt.ylabel('Time [ms]')
 plt.grid(True)
 plt.savefig('performances/' + name)
