@@ -15,7 +15,7 @@ int nbr_readers;
 
 pthread_mutex_t m_wcount;
 pthread_mutex_t m_rcount;
-pthread_mutex_t m_rsecurity;
+pthread_mutex_t m_wsecurity;
 
 sem_t wsem;  // bloque les writers
 sem_t rsem;  // bloque les readers
@@ -29,15 +29,16 @@ void *writes(void *data){
 
     while(count != 0){
 
-        // simule preparing the data
+        // simule la préparation du data
         for (int i=0; i<10000; i++);
 
         // section critique donc on lock
         pthread_mutex_lock(&m_wcount);
         writercount++;
-        if (writercount == 1){sem_wait(&rsem);} // arrivée du premier writer
+        if (writercount == 1){sem_wait(&rsem);} // arrivée du premier writer --> bloque l'accès aux prochains readers
         pthread_mutex_unlock(&m_wcount);
         
+        // un seul writer peut écrire à la fois
         sem_wait(&wsem);
         // écrire dans la database --> instantané
         sem_post(&wsem);
@@ -45,7 +46,7 @@ void *writes(void *data){
         // section critique donc on lock
         pthread_mutex_lock(&m_wcount);
         writercount--;
-        if (writercount == 0){sem_post(&rsem);} // départ du dernier writer
+        if (writercount == 0){sem_post(&rsem);} // départ du dernier writer --> libère l'accès pour les prochains readers
         pthread_mutex_unlock(&m_wcount);
 
         count--;
@@ -61,29 +62,29 @@ void *reads(void *data){
     while(count != 0){    
 
         // lock pour empêcher des readers de s'accumuler sur rsem
-        // pour que : quand un writer arrive il n'y ait qu'un lecteur d'occupé.
+        // pour que quand un writer arrive il n'y ait qu'un lecteur d'occupé.
         // autrement dit, donne + de poids au writer
-        pthread_mutex_lock(&m_rsecurity);
+        pthread_mutex_lock(&m_wsecurity);
         sem_wait(&rsem);
 
         // section critique donc on lock
         pthread_mutex_lock(&m_rcount);
         readercount++;
-        if (readercount==1){sem_wait(&wsem);} // arrivée du premier reader
+        if (readercount==1){sem_wait(&wsem);} // arrivée du premier reader --> bloque l'accès aux prochains writers
         pthread_mutex_unlock(&m_rcount);
 
         sem_post(&rsem);
-        pthread_mutex_unlock(&m_rsecurity);
+        pthread_mutex_unlock(&m_wsecurity);
 
         // lire la database --> instantané
         
         // section critique donc on lock
         pthread_mutex_lock(&m_rcount);
         readercount--;
-        if(readercount==0){sem_post(&wsem);} // départ du dernier reader
+        if(readercount==0){sem_post(&wsem);} // départ du dernier reader --> libère l'accès pour les prochains writers
         pthread_mutex_unlock(&m_rcount);
         
-        // simule processing the data
+        // simule utiliser le data
         for (int i=0; i<10000; i++);
 
         count--;
@@ -110,7 +111,7 @@ int main(int argc, char const *argv[]){
         printf("Erreur lors de l'initalisation du mutex rcount.");
         exit(EXIT_FAILURE);
     }
-    if (pthread_mutex_init(&m_rsecurity, NULL) != 0){
+    if (pthread_mutex_init(&m_wsecurity, NULL) != 0){
         printf("Erreur lors de l'initalisation du mutex rsecurity.");
         exit(EXIT_FAILURE);
     }
@@ -182,7 +183,7 @@ int main(int argc, char const *argv[]){
         printf("Erreur lors de la suppression du mutex rcount.");
         exit(EXIT_FAILURE);
     }
-    if (pthread_mutex_destroy(&m_rsecurity) != 0){
+    if (pthread_mutex_destroy(&m_wsecurity) != 0){
         printf("Erreur lors de la suppression du mutex rsecurity.");
         exit(EXIT_FAILURE);
     }

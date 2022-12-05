@@ -48,9 +48,9 @@ debug_prod_cons: src/producer_consumer.c
 
 # Reader-Writer task
 read_write: src/reader_writer.c performances/time_measures.sh performances/plot_measures.py
-	@$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
+	@$(CC) $(CFLAGS) $(THREADS) -o bins/exec_reader_writer src/reader_writer.c
 	@echo "Compilation of reader_writer done, beginning the measures."
-	@./performances/time_measures.sh reader_writer.csv bins/reader_writer
+	@./performances/time_measures.sh reader_writer.csv bins/exec_reader_writer
 	@python3 performances/plot_measures.py performances/reader_writer.csv reader_writer.pdf
 
 debug_read_write: src/reader_writer.c
