@@ -11,9 +11,16 @@ CONSUMER-THREADS = 10
 WRITER-THREADS = 10
 READERS-THREADS = 10
 
-# Rules
+# Inginious tasks
+compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer src/producer_consumer.c src/buffer.c
+	# $(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
+
+# All the first tack
 task1: philo prod_cons read_write
 
+# Philosopher task
 philo: src/philosophes.c performances/time_measures.sh performances/plot_measures.py
 	@$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
 	@echo "Compilation of philosophers done, beginning the measures."
@@ -26,6 +33,7 @@ debug_philo: src/philosophes.c
 	valgrind ./bins/philosophes $(PHILO-THREADS)
 	cppcheck src/philosophes.c
 
+# Producer-Consumer task
 prod_cons: src/producer_consumer.c performances/time_measures.sh performances/plot_measures.py
 	@$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer src/producer_consumer.c src/buffer.c
 	@echo "Compilation of producer_consumer done, beginning the measures."
@@ -38,6 +46,7 @@ debug_prod_cons: src/producer_consumer.c
 	valgrind ./bins/producer_consumer $(PRODUCER-THREADS) $(CONSUMER-THREADS)
 	cppcheck src/producer_consumer.c
 
+# Reader-Writer task
 read_write: src/reader_writer.c performances/time_measures.sh performances/plot_measures.py
 	@$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
 	@echo "Compilation of reader_writer done, beginning the measures."
@@ -50,12 +59,19 @@ debug_read_write: src/reader_writer.c
 	valgrind ./bins/reader_writer $(WRITER-THREADS) $(READERS-THREADS)
 	cppcheck src/reader_writer.c
 
-pdf: # TDOO : compile the report with the bash sript into the report/ folder
+# Compile the pdf report
+pdf: report/compile.sh
 	./report/compile.sh
 
+# Make zip for inginious tests
+zip:
+	@ zip -r project.zip . -x "*.git*" -x "*.pdf" -x"*.md" -x "*.code-workspace" -x "*.cls" -x "*.tex" -x "inginious/" -x ".vscode/" -x "project.zip*" -x "create_zip.sh*"
+
+# Clean the project
 clean:
 	@rm -f bins/*
 	@rm -f *.o
 	@rm -f *.log
 	@rm -f performances/*.csv
 	@rm -f performances/*.pdf	
+	@rm -f *.zip

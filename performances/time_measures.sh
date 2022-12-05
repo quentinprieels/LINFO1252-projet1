@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 # ================================================================================================================================
 # This script will collect the time that the system need to run the program.
 # 
