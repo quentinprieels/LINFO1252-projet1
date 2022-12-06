@@ -7,7 +7,7 @@
 
 // Initialisation du verrou
 int verrou;
-#define JOB 64000
+#define JOB 6400
 
 // Fonction d'un tread. Il execute arg fois la section critique
 void* thread_function(void *arg) {
