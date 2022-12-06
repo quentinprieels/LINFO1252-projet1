@@ -7,7 +7,6 @@
 */
 typedef struct {
     int value;
-    int *protect;
     int *verrou;
 } new_semaphore_t;
 
