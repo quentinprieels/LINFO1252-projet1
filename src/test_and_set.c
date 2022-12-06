@@ -13,10 +13,10 @@ int verrou;
 void* thread_function(void *arg) {
     int *work = (int *) arg;
     for (size_t i = 0; i < *work; i++) {
-        lock(&verrou);
+        ts_lock(&verrou);
         // Section critique
         for (int i=0; i<10000; i++);
-        unlock(&verrou);
+        ts_unlock(&verrou);
     }
     return (NULL);
 }

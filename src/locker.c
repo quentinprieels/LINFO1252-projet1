@@ -1,5 +1,5 @@
 /* ===== VERROU PAR ATTENTE ACTIVE TEST-AND-SET ===== */
-void lock(int *verrou) {
+void ts_lock(int *verrou) {
     int val = 1;
     
     while(val) {
@@ -12,7 +12,7 @@ void lock(int *verrou) {
     }
 }
 
-void unlock(int *verrou) {
+void ts_unlock(int *verrou) {
     int val = 0;
 
     asm(
@@ -24,7 +24,7 @@ void unlock(int *verrou) {
 }
 
 /* ====== VERROU AVEC L'ALGORITHME TEST-AND-TEST-AND-SET =====*/
-void lock_test(int *verrou) {
+void tts_lock(int *verrou) {
     int val = 1;
     
     do {
@@ -40,6 +40,6 @@ void lock_test(int *verrou) {
     } while(val);
 }
 
-void unlock_test(int *verrou) {
-    unlock(verrou);
+void tts_unlock(int *verrou) {
+    ts_unlock(verrou);
 }
