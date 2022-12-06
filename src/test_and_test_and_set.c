@@ -34,15 +34,12 @@ int main(int argc, char *argv[]) {
 
     // Calculer le nombre de travail à faire par thread
     int work = JOB / n_threads;
-    int rest = JOB - (work * n_threads) + work;
+    int rest = JOB % n_threads;
 
     // Initialisation des threads
     pthread_t threads[n_threads];
-    if (pthread_create(&threads[0], NULL, thread_function, &rest) != 0) {
-        printf("Erreur lors de la création du thread 0.\n");
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 1; i < n_threads; i++){
+    for (int i = 0; i < n_threads; i++){
+        if (i == n_threads - 1){work += rest;}  // donne le reste des threads non distribués au dernier initialisé.
         if (pthread_create(&threads[i], NULL, thread_function, &work) != 0) {
             printf("Erreur lors de la création du thread %d.\n", i);
             exit(EXIT_FAILURE);

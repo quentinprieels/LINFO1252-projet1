@@ -197,14 +197,11 @@ int main(int argc, char const *argv[]){
 
     //initialiser les writers
     int towrite = towrite_tot / nbr_writers;
-    int first_towrite = toread_tot - (towrite * nbr_writers ) + nbr_writers;
+    int rest_towrite = toread_tot % nbr_writers;
 
     pthread_t writers[nbr_writers];
-    if (pthread_create(&writers[0], NULL, writes, &first_towrite) != 0){
-        fprintf(stderr, "Erreur lors de la creation d'un tread writer.\n");
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 1; i < nbr_writers; i++) {
+    for (int i = 0; i < nbr_writers; i++) {
+        if (i == nbr_writers - 1){towrite += rest_towrite;} // donne le reste des threads non distribués au dernier initialisé
         if (pthread_create(&writers[i], NULL, writes, &towrite) != 0){
             fprintf(stderr, "Erreur lors de la creation d'un tread writer.\n");
             exit(EXIT_FAILURE);
@@ -213,14 +210,11 @@ int main(int argc, char const *argv[]){
 
     //initialiser les readers
     int toread = toread_tot / nbr_readers;
-    int first_toread = toread_tot - toread * (nbr_readers) + nbr_readers;
+    int rest_toread = toread_tot % nbr_readers;
     
     pthread_t readers[nbr_readers];
-    if (pthread_create(&readers[0], NULL, reads, &first_toread) != 0){
-        fprintf(stderr, "Erreur lors de la creation d'un tread reader.\n");
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 1; i < nbr_readers; i++) {
+    for (int i = 0; i < nbr_readers; i++) {
+        if (i == nbr_readers - 1){toread += rest_toread;} // donne le reste des threads non distribués au dernier initialisé
         if (pthread_create(&readers[i], NULL, reads, &toread) != 0){
             fprintf(stderr, "Erreur lors de la creation d'un tread reader.\n");
             exit(EXIT_FAILURE);

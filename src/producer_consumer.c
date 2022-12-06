@@ -109,17 +109,14 @@ int main(int argc, char *argv[]) {
 
     // Calcule du nombre d'éléments que chaque thread doit traiter
     int to_compute_conso = max_count / nbr_conso;
-    int rest_compute_conso = max_count - (to_compute_conso * nbr_conso) + to_compute_conso;
+    int rest_compute_conso = max_count % nbr_conso + to_compute_conso;
     int to_compute_prod = max_count / nbr_prod;
-    int rest_compute_prod = max_count - (to_compute_prod * nbr_prod) + to_compute_prod;
+    int rest_compute_prod = max_count % nbr_prod + to_compute_prod;
 
     // Creation des threads produteurs
     pthread_t producteurs[nbr_prod];
-    if (pthread_create(&producteurs[0], NULL, produit, &rest_compute_prod) != 0) {
-        fprintf(stderr, "Erreur lors de la creation d'un tread producteurs.\n");
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 1; i < nbr_prod; i++) {
+    for (int i = 0; i < nbr_prod; i++) {  // donne le reste des threads non distribués au dernier initialisé.
+        if (i == nbr_prod - 1){to_compute_prod += rest_compute_prod;}
         if (pthread_create(&producteurs[i], NULL, produit, &to_compute_prod) != 0) {
             fprintf(stderr, "Erreur lors de la creation d'un tread producteurs.\n");
             exit(EXIT_FAILURE);
@@ -128,11 +125,8 @@ int main(int argc, char *argv[]) {
 
     // Création des threads consomateurs
     pthread_t consomateurs[nbr_conso];
-    if (pthread_create(&consomateurs[0], NULL, consomme, &rest_compute_conso) != 0) {
-        fprintf(stderr, "Erreur lors de la creation d'un tread consomateurs.\n");
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 1; i < nbr_conso; i++) {
+    for (int i = 0; i < nbr_conso; i++) {
+        if (i == nbr_conso - 1){to_compute_conso += rest_compute_conso;}  // donne le reste des threads non distribués au dernier initialisé.
         if (pthread_create(&consomateurs[i], NULL, consomme, &to_compute_conso) != 0) {
             fprintf(stderr, "Erreur lors de la creation d'un tread consomateurs.\n");
             exit(EXIT_FAILURE);
