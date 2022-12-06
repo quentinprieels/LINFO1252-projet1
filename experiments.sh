@@ -28,8 +28,8 @@ cat performances/reader_writer_ingi.csv
 echo ""
 
 # Collect the time for task 2
-./performances/time_measures.sh test_and_set.csv bins/test_and_set
-./performances/time_measures.sh test_and_test_and_set.csv bins/test_and_test_and_set
+./performances/time_measures.sh test_and_set_ingi.csv bins/test_and_set
+./performances/time_measures.sh test_and_test_and_set_ingi.csv bins/test_and_test_and_set
 
 # Print CSV files in the
 echo "test_and_set.csv"
