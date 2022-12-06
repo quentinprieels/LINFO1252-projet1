@@ -3,20 +3,20 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "latch.c"
+#include "locker.c"
 
 // Initialisation du verrou
 int verrou;
 #define JOB 64000
 
 // Fonction d'un tread. Il execute arg fois la section critique
-void* thread_function (void *arg) {
+void* thread_function(void *arg) {
     int *work = (int *) arg;
     for (size_t i = 0; i < *work; i++) {
-        lock(&verrou);
+        lock_test(&verrou);
         // Section critique
         for (int i=0; i<10000; i++);
-        unlock(&verrou);
+        unlock_test(&verrou);
     }
     return (NULL);
 }

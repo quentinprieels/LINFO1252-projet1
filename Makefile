@@ -10,14 +10,15 @@ PRODUCER-THREADS = 10
 CONSUMER-THREADS = 10
 WRITER-THREADS = 10
 READERS-THREADS = 10
-LATCH_MEASURE = 10
+LOCKER = 10
 
 # Inginious tasks - compilation
-compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c src/latch_measure.c
+compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c src/test_and_set.c src/test_and_test_and_set.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer src/producer_consumer.c src/buffer.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
-	$(CC) $(CFLAGS) $(THREADS) -o bins/latch_measure src/latch_measure.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/test_and_set src/test_and_set.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/test_and_test_and_set src/test_and_test_and_set.c
 
 # Make local tests and graphs
 local: performances/time_measures.sh performances/plot_measures.py
@@ -36,9 +37,13 @@ local: performances/time_measures.sh performances/plot_measures.py
 	@./performances/time_measures.sh reader_writer.csv bins/reader_writer
 	@python3 performances/plot_measures.py performances/reader_writer.csv reader_writer.pdf
 
-	@echo "Launching local measure for latch measure (This can take some time)."
-	@./performances/time_measures.sh latch_measure.csv bins/latch_measure
-	@python3 performances/plot_measures.py performances/latch_measure.csv latch_measure.pdf
+	@echo "Launching local measure for test and set."
+	@./performances/time_measures.sh test_and_set.csv bins/test_and_set
+	@python3 performances/plot_measures.py performances/test_and_set.csv test_and_set.pdf
+
+	@echo "Launching local measure for test and test and set."
+	@./performances/time_measures.sh test_and_test_and_set.csv bins/test_and_test_and_set
+	@python3 performances/plot_measures.py performances/test_and_test_and_set.csv test_and_test_and_set.pdf
 
 # Debugging
 debug_philo: src/philosophes.c
@@ -60,11 +65,17 @@ debug_read_write: src/reader_writer.c
 	cppcheck src/reader_writer.c
 
 
-debug_latch: src/latch_measure.c 
-	$(CC) $(CFLAGS) $(THREADS) -o bins/latch_measure src/latch_measure.c
-	gdb --args bins/latch_measure $(LATCH_MEASURE)
-	valgrind ./bins/latch_measure $(LATCH_MEASURE)
-	cppcheck src/latch_measure.c
+debug_test_and_set: src/test_and_set.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/test_and_set src/test_and_set.c
+	gdb --args bins/test_and_set $(LOCKER)
+	valgrind ./bins/test_and_set $(LOCKER)
+	cppcheck src/test_and_set.c
+
+debug_test_and_test_and_set: src/test_and_test_and_set.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/test_and_test_and_set src/test_and_test_and_set.c
+	gdb --args bins/test_and_test_and_set $(LOCKER)
+	valgrind ./bins/test_and_test_and_set $(LOCKER)
+	cppcheck src/test_and_test_and_set.c
 
 # Compile the pdf report
 pdf: report/compile.sh

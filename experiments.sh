@@ -27,5 +27,19 @@ echo "reader_writer_ingi.csv"
 cat performances/reader_writer_ingi.csv
 echo ""
 
+# Collect the time for task 2
+./performances/time_measures.sh test_and_set.csv bins/test_and_set
+./performances/time_measures.sh test_and_test_and_set.csv bins/test_and_test_and_set
+
+# Print CSV files in the
+echo "test_and_set.csv"
+cat performances/test_and_set.csv
+echo ""
+
+echo "test_and_test_and_set.csv"
+cat performances/test_and_test_and_set.csv
+echo ""
+
+
 # Clean all files
 make clean -s
