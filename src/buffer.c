@@ -1,5 +1,6 @@
-#include "buffer.h"
 #include <stdlib.h>
+
+#include "headers/buffer.h"
 
 buffer_t *malloc_buffer(int size) {
     buffer_t *buffer = (buffer_t *) malloc(sizeof(buffer_t));

@@ -6,19 +6,27 @@ TESTS = -lcuint
 
 # Programs threads number for debugging
 PHILO-THREADS = 100
-PRODUCER-THREADS = 10
-CONSUMER-THREADS = 10
-WRITER-THREADS = 10
-READERS-THREADS = 10
-LOCKER = 10
+PRODUCER-THREADS = 16
+CONSUMER-THREADS = 16
+WRITER-THREADS = 16
+READERS-THREADS = 16
+LOCKER = 16
 
 # Inginious tasks - compilation
 compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c src/test_and_set.c src/test_and_test_and_set.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer src/producer_consumer.c src/buffer.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer src/reader_writer.c
-	$(CC) $(CFLAGS) $(THREADS) -o bins/test_and_set src/test_and_set.c
-	$(CC) $(CFLAGS) $(THREADS) -o bins/test_and_test_and_set src/test_and_test_and_set.c
+
+	$(CC) $(CFLAGS) $(THREADS) -o bins/test_and_set src/test_and_set.c src/locker.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/test_and_test_and_set src/test_and_test_and_set.c src/locker.c
+
+	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes_tts src/philosophes_tts.c src/locker.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer_tts src/producer_consumer_tts.c src/buffer.c src/locker.c src/new_semaphore.c
+
+	./bins/philosophes_tts $(PHILO-THREADS)
+	./bins/producer_consumer $(PRODUCER-THREADS) $(CONSUMER-THREADS)
+	./bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
 
 # Make local tests and graphs
 local: performances/time_measures.sh performances/plot_measures.py
@@ -72,6 +80,20 @@ debug_test_and_test_and_set: src/test_and_test_and_set.c
 	gdb --args bins/test_and_test_and_set $(LOCKER)
 	valgrind ./bins/test_and_test_and_set $(LOCKER)
 	cppcheck src/test_and_test_and_set.c
+
+
+debug_philo_tts: src/philosophes_tts.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes_tts src/philosophes_tts.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
+	# ./bins/philosophes_tts $(PHILO-THREADS)
+	./bins/philosophes $(PHILO-THREADS)
+
+debug_prod_cons_tts: src/producer_consumer_tts.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer_tts src/producer_consumer_tts.c
+	# gdb --args bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
+	# valgrind ./bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
+	# cppcheck src/producer_consumer_tts.c
+	./bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
 
 # Compile the pdf report
 pdf: report/compile.sh

@@ -1,11 +1,12 @@
 #include <pthread.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include <semaphore.h>
 
 #include "headers/buffer.h"
+#include "headers/new_semaphore.h"
+#include "headers/locker.h"
 
 // Threads
 int nbr_conso;
@@ -18,9 +19,9 @@ int max_count = 8192;
 
 // Buffer
 buffer_t *buffer;
-pthread_mutex_t buffer_mutex;
-sem_t empty_buffer;
-sem_t full_buffer;
+int buffer_mutex;
+new_semaphore_t empty_buffer;
+new_semaphore_t full_buffer;
 
 
 // Fonction des consomateurs
@@ -30,13 +31,13 @@ void *consomme(void *data) {
     while(count != 0) {
         // Take an item into the buffer
         // TODO: Add the error mechanism
-        sem_wait(&full_buffer);
-        pthread_mutex_lock(&buffer_mutex);
+        new_wait(&full_buffer);
+        tts_lock(&buffer_mutex);
         
         int *removed = get(buffer);
         
-        pthread_mutex_unlock(&buffer_mutex);
-        sem_post(&empty_buffer);
+        tts_unlock(&buffer_mutex);
+        new_post(&empty_buffer);
 
         // Simulation d'un traitement
         for (int i = 0; i < 10000; i++);
@@ -63,13 +64,13 @@ void *produit(void *data) {
 
         // Placement dans le buffer 
         // TODO: Add the error mechanism
-        sem_wait(&empty_buffer);
-        pthread_mutex_lock(&buffer_mutex);
+        new_wait(&empty_buffer);
+        tts_lock(&buffer_mutex);
 
         put(buffer, to_put);
 
-        pthread_mutex_unlock(&buffer_mutex);
-        sem_post(&full_buffer);
+        tts_unlock(&buffer_mutex);
+        new_post(&full_buffer);
 
         count--;
     }
@@ -93,20 +94,11 @@ int main(int argc, char *argv[]) {
         printf("Erreur lors de la creation (malloc) du buffer.");
         exit(EXIT_FAILURE);
     }
-    if (pthread_mutex_init(&buffer_mutex, NULL) != 0) {
-        printf("Erreur lors de l'initalisation du mutex buffer.");
-        exit(EXIT_FAILURE);
-    }
+    buffer_mutex = 0;
 
     // Initialiser les sémaphores
-    if (sem_init(&empty_buffer, 0, 8) == -1) {
-        printf("Erreur lors de l'initialisation du sémaphore put");
-        exit(EXIT_FAILURE);
-    }
-    if (sem_init(&full_buffer, 0, 0) == -1) {
-        printf("Erreur lors de l'initialisation du sémaphore take");
-        exit(EXIT_FAILURE);
-    }
+    new_semaphore_init(&empty_buffer, 8);
+    new_semaphore_init(&full_buffer, 0);
 
     // Calcule du nombre d'éléments que chaque thread doit traiter
     int to_compute_conso = max_count / nbr_conso;
@@ -133,7 +125,7 @@ int main(int argc, char *argv[]) {
             exit(EXIT_FAILURE);
         }
         // Important pour eviter un deadlock (notifie tout les consomateurs que les producteurs sont terminés)
-        for (int i = 0; i < nbr_prod; i++) {sem_post(&full_buffer);}     
+        for (int i = 0; i < nbr_prod; i++) {new_post(&full_buffer);}
     }
 
     // Join sur tout les threads
@@ -155,9 +147,8 @@ int main(int argc, char *argv[]) {
 
     // Destroy mutex and semaphore
     // TODO: Implement the error mechanism
-    pthread_mutex_destroy(&buffer_mutex);
-    sem_destroy(&empty_buffer);
-    sem_destroy(&full_buffer);
+    new_semaphore_destroy(&empty_buffer);
+    new_semaphore_destroy(&full_buffer);
 
     exit(EXIT_SUCCESS);
 }

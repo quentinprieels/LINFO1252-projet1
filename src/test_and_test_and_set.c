@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "locker.c"
+
+#include "headers/locker.h"
 
 // Initialisation du verrou
 int verrou;

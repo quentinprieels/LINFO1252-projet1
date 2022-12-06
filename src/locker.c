@@ -1,4 +1,5 @@
-/* ===== VERROU PAR ATTENTE ACTIVE TEST-AND-SET ===== */
+#include "headers/locker.h"
+
 void ts_lock(int *verrou) {
     int val = 1;
     
@@ -6,7 +7,7 @@ void ts_lock(int *verrou) {
         asm(
             "xchgl %0, %1"      /* Atomic exchange of values */
             : "+r" (val)        /* Operand referred to by %0, stored into any register (and writer/reading access) */
-            : "m" (*verrou)     /* Operand referred to by %1, stored into any register */
+            : "m" (*verrou)     /* Operand referred to by %1, stored into the memory */
             : "memory"          /* There is a operation between memory and register */
         );
     }
@@ -23,7 +24,6 @@ void ts_unlock(int *verrou) {
     );
 }
 
-/* ====== VERROU AVEC L'ALGORITHME TEST-AND-TEST-AND-SET =====*/
 void tts_lock(int *verrou) {
     int val = 1;
     
