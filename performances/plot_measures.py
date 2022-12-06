@@ -3,41 +3,57 @@
 """
 This script plots the measures of the performances of a model.
 
-USAGE:   python3 plot_measures.py <performance_file> <output_file>
-EXAMPLE: python3 plot_measures.py performance.csv performance.pdf
+USAGE:   python3 plot_measures.py <list_of_performance_files> <output_file> <optionnal : type>
+EXAMPLE: python3 plot_measures.py performance1.csv,performance2.csv,performance3.csv performances.pdf same
 
-DESCRIPTION:    This script will analyze the performance file and plot the mean an the standard deviation of the measures.
+PRE-CONDITIONS: performance_files take the extension .csv and are separated by a "," without any space between
+                type can be "same" or "different", by default or if non-specified : type="different"
+DESCRIPTION:    This script will analyze the performance file(s) and plot the mean an the standard deviation of the measures.
                 To generate the performance file, use the script performances/timeseries_measures.sh
-                The output file will be a file containing the plot (the extentions type must be given).
+                The output file will be a file containing the plot(s) (the extentions type must be given).
 """
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read the datas
-filename = sys.argv[1]
-name = sys.argv[2]
+filenames = sys.argv[1].split(',') # liste de nom de fichiers
+n = len(filenames)
+name = sys.argv[2] # nom du fichier d'output
+try :
+    type = sys.argv[3] # "same" or "different"
+except :
+    type = "different"
 
-df = pd.read_csv(filename, sep=',')
+dfs = []
+for filename in filenames:
+    dfs.append(pd.read_csv(filename, sep=','))
 
 # For each thread number, compute the mean, the standard deviation
-df['means'] = df.drop('nbr_threads', axis=1).mean(axis=1)
-df['stds'] = df.drop('nbr_threads', axis=1).std(axis=1)
+for df in dfs:
+    df['means'] = df.drop('nbr_threads', axis=1).mean(axis=1)
+    df['stds'] = df.drop('nbr_threads', axis=1).std(axis=1)
 
 # Plot the results
 # Create figure
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-
-# Type of plot
-plt.errorbar(df['nbr_threads'], df['means']*1000, yerr=df['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1)
-ax.set_xscale('log', base=2)
-ax.set_ylim(bottom=-5)
-# plt.boxplot(df.drop('nbr_threads', axis=1).T, sym="", labels=df['nbr_threads'])
-# plt.violinplot(df.drop('nbr_threads', axis=1).T, showmeans=True, showmedians=False, showextrema=False)
+fig, ax = plt.subplots()
+if type == "same":
+    for i in range(n):
+        plt.errorbar(dfs[i]['nbr_threads'], dfs[i]['means']*1000, yerr=dfs[i]['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1)
+        ax.set_xscale('log', base=2)
+        ax.set_ylim(bottom=-5)  
+        plt.grid(True)
+else :
+    for i in range(n):
+        ax = plt.subplot(n, 1, i+1)
+        ax.errorbar(dfs[i]['nbr_threads'], dfs[i]['means']*1000, yerr=dfs[i]['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1)
+        ax.set_xscale('log', base=2)
+        ax.set_ylim(bottom=0)
+        ax.grid(True)
+        ax.set_title(filenames[i].split('/')[-1].rstrip('.csv'))
 
 # Plot parameters
+fig.tight_layout()
 plt.xlabel('Number of threads [#]')
 plt.ylabel('Time [ms]')
-plt.grid(True)
-plt.savefig('performances/' + name)
+plt.savefig('performances/' + name, bbox_inches='tight')

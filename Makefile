@@ -27,23 +27,19 @@ local: performances/time_measures.sh performances/plot_measures.py
 
 	@echo "Launching local measure for philosophers."
 	@./performances/time_measures.sh philosophes.csv bins/philosophes
-	@python3 performances/plot_measures.py performances/philosophes.csv philosophes.pdf
-
 	@echo "Launching local measure for producer_consumer."
 	@./performances/time_measures.sh producer_consumer.csv bins/producer_consumer
-	@python3 performances/plot_measures.py performances/producer_consumer.csv producer_consumer.pdf
-
 	@echo "Launching local measure for reader_writer."
 	@./performances/time_measures.sh reader_writer.csv bins/reader_writer
-	@python3 performances/plot_measures.py performances/reader_writer.csv reader_writer.pdf
+	@echo "Launching the plots"
+	@python3 performances/plot_measures.py performances/philosophes.csv,performances/producer_consumer.csv,performances/reader_writer.csv part1.pdf different
 
 	@echo "Launching local measure for test and set."
 	@./performances/time_measures.sh test_and_set.csv bins/test_and_set
-	@python3 performances/plot_measures.py performances/test_and_set.csv test_and_set.pdf
-
 	@echo "Launching local measure for test and test and set."
 	@./performances/time_measures.sh test_and_test_and_set.csv bins/test_and_test_and_set
-	@python3 performances/plot_measures.py performances/test_and_test_and_set.csv test_and_test_and_set.pdf
+	@echo "Launching the plots"
+	@python3 performances/plot_measures.py performances/test_and_set.csv,performances/test_and_test_and_set.csv part2.pdf same
 
 # Debugging
 debug_philo: src/philosophes.c
@@ -91,5 +87,6 @@ clean:
 	@rm -f *.o
 	@rm -f *.log
 	@rm -f performances/*.csv
+	@rm -f *.csv
 	@rm -f performances/*.pdf	
 	@rm -f *.zip
