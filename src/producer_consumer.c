@@ -109,9 +109,9 @@ int main(int argc, char *argv[]) {
 
     // Calcule du nombre d'éléments que chaque thread doit traiter
     int to_compute_conso = max_count / nbr_conso;
-    int rest_compute_conso = max_count % nbr_conso + to_compute_conso;
+    int rest_compute_conso = max_count % nbr_conso;
     int to_compute_prod = max_count / nbr_prod;
-    int rest_compute_prod = max_count % nbr_prod + to_compute_prod;
+    int rest_compute_prod = max_count % nbr_prod;
 
     // Creation des threads produteurs
     pthread_t producteurs[nbr_prod];
