@@ -36,7 +36,10 @@ for df in dfs:
 
 # Plot the results
 # Create figure
-fig, ax = plt.subplots()
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+
+
 if type == "same":
     for i in range(n):
         plt.errorbar(dfs[i]['nbr_threads'], dfs[i]['means']*1000, yerr=dfs[i]['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1)
@@ -44,16 +47,26 @@ if type == "same":
         ax.set_ylim(bottom=-5)  
         plt.grid(True)
 else :
+    # On change la taille de la figure pour que ce soit plus joli + on cache le gros plot qui contient tous les subplots
+    fig.set_figwidth(n*5)
+    fig.set_figheight(5)
+    ax.spines['top'].set_color('none')
+    ax.spines['bottom'].set_color('none')
+    ax.spines['left'].set_color('none')
+    ax.spines['right'].set_color('none')
+    ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
+
+    # rajout des subplots à l'horizontal
     for i in range(n):
-        ax = plt.subplot(n, 1, i+1)
-        ax.errorbar(dfs[i]['nbr_threads'], dfs[i]['means']*1000, yerr=dfs[i]['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1)
-        ax.set_xscale('log', base=2)
-        ax.set_ylim(bottom=0)
-        ax.grid(True)
-        ax.set_title(filenames[i].split('/')[-1].rstrip('.csv'))
+        axi = fig.add_subplot(1, n, i+1)
+        axi.errorbar(dfs[i]['nbr_threads'], dfs[i]['means']*1000, yerr=dfs[i]['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1)
+        axi.set_xscale('log', base=2)
+        axi.set_ylim(bottom=0)
+        axi.grid(True)
+        axi.set_title(filenames[i].split('/')[-1].rstrip('.csv'))
 
 # Plot parameters
 fig.tight_layout()
-plt.xlabel('Number of threads [#]')
-plt.ylabel('Time [ms]')
+ax.set_xlabel('Number of threads [#]')
+ax.set_ylabel('Time [ms]')
 plt.savefig('performances/' + name, bbox_inches='tight')
