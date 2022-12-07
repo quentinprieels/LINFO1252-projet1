@@ -10,8 +10,7 @@
 // Initialisation
 
 #define towrite_tot 2560
-#define toread_tot 860
-
+#define toread_tot 640
 int nbr_writers;
 int nbr_readers;
 

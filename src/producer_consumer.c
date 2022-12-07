@@ -131,9 +131,7 @@ int main(int argc, char *argv[]) {
         if (pthread_create(&consomateurs[i], NULL, consomme, &to_compute_conso) != 0) {
             fprintf(stderr, "Erreur lors de la creation d'un tread consomateurs.\n");
             exit(EXIT_FAILURE);
-        }
-        // Important pour eviter un deadlock (notifie tout les consomateurs que les producteurs sont terminés)
-        for (int i = 0; i < nbr_prod; i++) {sem_post(&full_buffer);}     
+        }     
     }
 
     // Join sur tout les threads
@@ -143,6 +141,9 @@ int main(int argc, char *argv[]) {
 			exit(EXIT_FAILURE);
 		}
     }
+    // Important pour eviter un deadlock (notifie tout les consomateurs que les producteurs sont terminés)
+    for (int i = 0; i < nbr_prod; i++) {sem_post(&full_buffer);}
+
     for (int i = 0; i < nbr_prod; i++) {
         if (pthread_join(consomateurs[i], NULL) != 0) {
 			fprintf(stderr, "Erreur lors de la terminaison d'un consomateurs.\n");

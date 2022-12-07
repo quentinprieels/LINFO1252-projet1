@@ -69,4 +69,4 @@ else :
 fig.tight_layout()
 ax.set_xlabel('Number of threads [#]')
 ax.set_ylabel('Time [ms]')
-plt.savefig('performances/' + name, bbox_inches='tight')
+plt.savefig(name, bbox_inches='tight')

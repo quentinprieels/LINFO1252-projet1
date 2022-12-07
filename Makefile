@@ -12,7 +12,7 @@ WRITER-THREADS = 16
 READERS-THREADS = 16
 LOCKER = 16
 
-# Inginious tasks - compilation
+# Compilation
 compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c src/test_and_set.c src/test_and_test_and_set.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer src/producer_consumer.c src/buffer.c
@@ -25,33 +25,50 @@ compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c src/test_
 	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer_tts src/producer_consumer_tts.c src/buffer.c src/locker.c src/new_semaphore.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer_tts src/reader_writer_tts.c src/locker.c src/new_semaphore.c
 
-
-	./bins/philosophes_tts $(PHILO-THREADS)
-	./bins/producer_consumer $(PRODUCER-THREADS) $(CONSUMER-THREADS)
-	./bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
-	./bins/reader_writer $(READERS-THREADS) $(READERS-THREADS)
-	./bins/reader_writer_tts $(READERS-THREADS) $(READERS-THREADS)
-
-# Make local tests and graphs
-local: performances/time_measures.sh performances/plot_measures.py
-	@make compile -s
-	@echo "Compilation done."
-
+# Collecting performances
+measure: performances/time_measures.sh performances/plot_measures.py
 	@echo "Launching local measure for philosophers."
 	@./performances/time_measures.sh philosophes.csv bins/philosophes
 	@echo "Launching local measure for producer_consumer."
 	@./performances/time_measures.sh producer_consumer.csv bins/producer_consumer
 	@echo "Launching local measure for reader_writer."
 	@./performances/time_measures.sh reader_writer.csv bins/reader_writer
-	@echo "Launching the plots"
-	@python3 performances/plot_measures.py performances/philosophes.csv,performances/producer_consumer.csv,performances/reader_writer.csv part1.pdf different
 
 	@echo "Launching local measure for test and set."
 	@./performances/time_measures.sh test_and_set.csv bins/test_and_set
 	@echo "Launching local measure for test and test and set."
 	@./performances/time_measures.sh test_and_test_and_set.csv bins/test_and_test_and_set
-	@echo "Launching the plots"
-	@python3 performances/plot_measures.py performances/test_and_set.csv,performances/test_and_test_and_set.csv part2.pdf same
+
+	@echo "Launching local measure for philosophers tts"
+	@./performances/time_measures.sh philosophes_tts.csv bins/philosophes_tts
+	@echo "Launching local measure for producer_consumer tts."
+	@./performances/time_measures.sh producer_consumer_tts.csv bins/producer_consumer_tts
+	
+measure_tts: performances/time_measures.sh performances/plot_measures.py	
+	@echo "Launching local measure for reader_writer tts."
+	@./performances/time_measures.sh reader_writer_tts.csv bins/reader_writer_tts
+
+# Plotting performances
+plot: performances/plot_measures.py
+	@echo "Plotting local performances for first task."
+	@python3 performances/plot_measures.py performances/philosophes.csv performances/philosophes.pdf
+	@python3 performances/plot_measures.py performances/producer_consumer.csv performances/producer_consumer.pdf
+	@python3 performances/plot_measures.py performances/reader_writer.csv performances/reader_writer.pdf
+
+	@echo "Plotting local performances for lockers"
+	@python3 performances/plot_measures.py performances/test_and_set.csv performances/test_and_set.pdf
+	@python3 performances/plot_measures.py performances/test_and_test_and_set.csv performances/test_and_test_and_set.pdf
+
+	@echo "Plotting local performances for second task."
+	@python3 performances/plot_measures.py performances/philosophes_tts.csv performances/philosophes_tts.pdf
+	@python3 performances/plot_measures.py performances/producer_consumer_tts.csv performances/producer_consumer_tts.pdf
+	# @python3 performances/plot_measures.py performances/reader_writer_tts.csv performances/reader_writer_tts.pdf
+
+# All plot in local tests
+local:
+	@make compile -s
+	@make measure
+	@make plot
 
 # Debugging
 debug_philo: src/philosophes.c
