@@ -102,7 +102,6 @@ debug_test_and_test_and_set: src/test_and_test_and_set.c
 	valgrind ./bins/test_and_test_and_set $(LOCKER)
 	cppcheck src/test_and_test_and_set.c
 
-
 debug_philo_tts: src/philosophes_tts.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes_tts src/philosophes_tts.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes src/philosophes.c
@@ -121,6 +120,28 @@ debug_read_write_tts: src/reader_writer_tts.c
 	gdb --args bins/reader_writer_tts $(WRITER-THREADS) $(READERS-THREADS)
 	valgrind ./bins/reader_writer_tts $(WRITER-THREADS) $(READERS-THREADS)
 	cppcheck src/reader_writer_tts.c
+
+final_plot:
+	@python3 inginious/split.py inginious/run2.txt
+	
+	echo "Single plot for each file..."
+	@python3 performances/plot_measures.py performances/philosophes_ingi.csv performances/philosophes.pdf
+	@python3 performances/plot_measures.py performances/producer_consumer_ingi.csv performances/producer_consumer.pdf
+	@python3 performances/plot_measures.py performances/reader_writer_ingi.csv performances/reader_writer.pdf
+
+	@python3 performances/plot_measures.py performances/test_and_set_ingi.csv performances/test_and_set.pdf
+	@python3 performances/plot_measures.py performances/test_and_test_and_set_ingi.csv performances/test_and_test_and_set.pdf
+
+	@python3 performances/plot_measures.py performances/philosophes_tts_ingi.csv performances/philosophes_tts.pdf
+	@python3 performances/plot_measures.py performances/producer_consumer_tts_ingi.csv performances/producer_consumer_tts.pdf
+	@python3 performances/plot_measures.py performances/reader_writer_tts_ingi.csv performances/reader_writer_tts.pdf
+
+	echo "Plotting ts vs tts..."
+	@python3 performances/plot_measures.py performances/test_and_set_ingi.csv,performances/test_and_test_and_set_ingi.csv performances/ts_vs_tts.pdf same
+	@python3 performances/plot_measures.py performances/philosophes_ingi.csv,performances/philosophes_tts_ingi.csv performances/philosophes_vs_tts.pdf same
+	@python3 performances/plot_measures.py performances/producer_consumer_ingi.csv,performances/producer_consumer_tts_ingi.csv performances/producer_consumer_vs_tts.pdf same
+	@python3 performances/plot_measures.py performances/reader_writer_ingi.csv,performances/reader_writer_tts_ingi.csv performances/reader_writer_vs_tts.pdf same
+
 
 # Compile the pdf report
 pdf: report/compile.sh
