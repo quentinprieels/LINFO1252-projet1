@@ -129,23 +129,11 @@ debug_read_write_tts: src/reader_writer_tts.c
 final_plot:
 	@python3 inginious/split.py inginious/run2.txt
 	
-	echo "Single plot for each file..."
-	@python3 performances/plot_measures.py performances/philosophes_ingi.csv performances/philosophes.pdf
-	@python3 performances/plot_measures.py performances/producer_consumer_ingi.csv performances/producer_consumer.pdf
-	@python3 performances/plot_measures.py performances/reader_writer_ingi.csv performances/reader_writer.pdf
-
-	@python3 performances/plot_measures.py performances/test_and_set_ingi.csv performances/test_and_set.pdf
-	@python3 performances/plot_measures.py performances/test_and_test_and_set_ingi.csv performances/test_and_test_and_set.pdf
-
-	@python3 performances/plot_measures.py performances/philosophes_tts_ingi.csv performances/philosophes_tts.pdf
-	@python3 performances/plot_measures.py performances/producer_consumer_tts_ingi.csv performances/producer_consumer_tts.pdf
-	@python3 performances/plot_measures.py performances/reader_writer_tts_ingi.csv performances/reader_writer_tts.pdf
-
-	echo "Plotting ts vs tts..."
-	@python3 performances/plot_measures.py performances/test_and_set_ingi.csv,performances/test_and_test_and_set_ingi.csv performances/ts_vs_tts.pdf same
-	@python3 performances/plot_measures.py performances/philosophes_ingi.csv,performances/philosophes_tts_ingi.csv performances/philosophes_vs_tts.pdf same
-	@python3 performances/plot_measures.py performances/producer_consumer_ingi.csv,performances/producer_consumer_tts_ingi.csv performances/producer_consumer_vs_tts.pdf same
-	@python3 performances/plot_measures.py performances/reader_writer_ingi.csv,performances/reader_writer_tts_ingi.csv performances/reader_writer_vs_tts.pdf same
+	@echo "Plotting the comparison of algorithms..."
+	@python3 performances/plot_measures.py performances/test-and-set_ingi.csv,performances/test-and-test-and-set_ingi.csv performances/ts_vs_tts.pdf line
+	@python3 performances/plot_measures.py performances/philosophes_ingi.csv,performances/philosophes-tts_ingi.csv performances/philosophes_vs_tts.pdf line
+	@python3 performances/plot_measures.py performances/producer-consumer_ingi.csv,performances/producer-consumer-tts_ingi.csv performances/producer_consumer_vs_tts.pdf line
+	@python3 performances/plot_measures.py performances/reader-writer_ingi.csv,performances/reader-writer-tts_ingi.csv performances/reader_writer_vs_tts.pdf line
 
 
 # Compile the pdf report
