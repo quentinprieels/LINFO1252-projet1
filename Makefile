@@ -117,7 +117,7 @@ debug_prod_cons_tts: src/producer_consumer_tts.c
 	./bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
 
 debug_read_write_tts: src/reader_writer_tts.c
-	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer_tts src/reader_writer_tts.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer_tts src/reader_writer_tts.c src/locker.c src/new_semaphore.c
 	gdb --args bins/reader_writer_tts $(WRITER-THREADS) $(READERS-THREADS)
 	valgrind ./bins/reader_writer_tts $(WRITER-THREADS) $(READERS-THREADS)
 	cppcheck src/reader_writer_tts.c

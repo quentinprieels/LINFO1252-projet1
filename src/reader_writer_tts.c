@@ -135,11 +135,14 @@ int main(int argc, char const *argv[]){
 
     //initialiser les readers
     int toread = toread_tot / nbr_readers;
-    int rest_toread = toread_tot % nbr_readers;
+    int rest_toread = toread_tot % nbr_readers + toread;
     
     pthread_t readers[nbr_readers];
-    for (int i = 0; i < nbr_readers; i++) {
-        if (i == nbr_readers - 1){toread += rest_toread;} // donne le reste des threads non distribués au dernier initialisé
+    if (pthread_create(&readers[0], NULL, reads, &rest_toread) != 0){
+        fprintf(stderr, "Erreur lors de la creation d'un tread reader.\n");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 1; i < nbr_readers; i++) {
         if (pthread_create(&readers[i], NULL, reads, &toread) != 0){
             fprintf(stderr, "Erreur lors de la creation d'un tread reader.\n");
             exit(EXIT_FAILURE);
