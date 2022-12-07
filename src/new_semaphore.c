@@ -13,15 +13,15 @@ void new_semaphore_init(new_semaphore_t *sem, int value) {
 void new_wait(new_semaphore_t *sem) {
     tts_lock(sem->verrou);
 
-    // Decrementation la valeur du semaphore
-    sem->value--;
-
     // Si la valeur est negative, on attend que la valeur soit positive
-    while(sem->value < 0) {
+    while(sem->value <= 0) {
         // On libere le verrou pour que le post puisse le prendre
         tts_unlock(sem->verrou);
         tts_lock(sem->verrou);
     }
+
+    // Decrementation la valeur du semaphore
+    sem->value--;
     
     tts_unlock(sem->verrou);
 }

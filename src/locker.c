@@ -13,15 +13,8 @@ void ts_lock(int *verrou) {
     }
 }
 
-void ts_unlock(int *verrou) {
-    int val = 0;
-
-    asm(
-        "xchgl %0, %1"
-        : "+r" (val)
-        : "m" (*verrou)
-        : "memory"
-    );
+void ts_unlock(int *verrou) { 
+    *verrou = 0;
 }
 
 void tts_lock(int *verrou) {
