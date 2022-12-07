@@ -153,3 +153,14 @@ clean:
 clean_force:
 	@rm -f measures/*.csv
 	@rm -f plots/*.pdf
+
+help:
+	@echo "compile : compile tous les fichiers relatifs aux questions"
+	@echo "ingi : crée les plots relatifs aux mesures retournées par inginious"
+	@echo "local : crée les plots relatifs aux mesures faites en local"
+	@echo "verify : vérifie les potentielles fuites mémoires"
+	@echo "experiments : lance le script experiments.sh"
+	@echo "zip_for_measures : crée une archive zip utilisée pour les mesures sur inginious"
+	@echo "zip_for_ingi : crée une archive zip utilisée pour rendre le projet final"
+	@echo "clean : efface tous les fichiers compilés"
+	@echo "clean_force : efface toutes les mesures"
