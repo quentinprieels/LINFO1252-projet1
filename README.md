@@ -8,7 +8,7 @@ Projet réalisé dans le cadre du cours LINFO1252 - Systèmes Informatiques par 
   - [**Prérequis**](#prérequis)
   - [**Lister les commandes**](#lister-les-commandes)
 - [Structure du Projet](#structure-du-projet)
-  - [\*\*bins](#bins)
+  - [**bins**](#bins)
   - [**inginious**](#inginious)
   - [**measures**](#measures)
   - [**performances**](#performances)
@@ -28,7 +28,7 @@ make help
 ```
 liste les différentes actions possibles à l'aide de make à utiliser en remplacant help par le mot-clé
 # Structure du Projet
-## **bins
+## **bins**
 Ce dossier contient tous les exécutables binaires générés
 ## **inginious**
 Ce dossier contient :
