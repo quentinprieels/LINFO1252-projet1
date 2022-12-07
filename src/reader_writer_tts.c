@@ -96,6 +96,9 @@ void *reads(void *data){
         if (readercount == 0){new_post(&wsem);} // dernier reader --> on libère les writers
         tts_unlock(&lock_rcount);
         // fin de la section critique
+        
+        // simule le traitement des données
+        for (int i=0; i<10000; i++);
 
         count--;
     }

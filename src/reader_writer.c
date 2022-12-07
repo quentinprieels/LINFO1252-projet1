@@ -156,7 +156,10 @@ void *reads(void *data){
             exit(EXIT_FAILURE);
         }
         // fin de la section critique
-
+        
+        // simule le traitement des données
+        for (int i=0; i<10000; i++);
+        
         count--;
     }
     return NULL;
