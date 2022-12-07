@@ -43,10 +43,6 @@ measure: performances/time_measures.sh performances/plot_measures.py
 	@./performances/time_measures.sh philosophes_tts.csv bins/philosophes_tts
 	@echo "Launching local measure for producer_consumer tts."
 	@./performances/time_measures.sh producer_consumer_tts.csv bins/producer_consumer_tts
-	
-measure_tts: performances/time_measures.sh performances/plot_measures.py	
-	@echo "Launching local measure for reader_writer tts."
-	@./performances/time_measures.sh reader_writer_tts.csv bins/reader_writer_tts
 
 # Plotting performances
 plot: performances/plot_measures.py
@@ -69,6 +65,15 @@ local:
 	@make compile -s
 	@make measure
 	@make plot
+
+local_tts: performances/time_measures.sh performances/plot_measures.py	
+	@echo "Launching local ts vs tts."
+	@./performances/time_measures.sh test_and_set.csv bins/test_and_set
+	@./performances/time_measures.sh test_and_test_and_set.csv bins/test_and_test_and_set
+
+	@echo "Plot tts vs ts."
+	@python3 performances/plot_measures.py performances/test_and_set.csv performances/test_and_set_local.pdf
+	@python3 performances/plot_measures.py performances/test_and_test_and_set.csv performances/test_and_test_and_set_local.pdf
 
 # Debugging
 debug_philo: src/philosophes.c
