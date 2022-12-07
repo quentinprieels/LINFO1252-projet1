@@ -2,31 +2,33 @@
 Projet réalisé dans le cadre du cours LINFO1252 - Systèmes Informatiques par Quentin Prieels et Nathan Zeep (mercredi, groupe : 26)
 
 # Index
+- [linfo1252-projet1](#linfo1252-projet1)
+- [Index](#index)
 - [Utilisation](#utilisation)
-  - [Prérequis](#prérequis)
-  - [Lister les commandes](#lister-les-commandes)
+  - [**Prérequis**](#prérequis)
+  - [**Lister les commandes**](#lister-les-commandes)
 - [Structure du Projet](#structure-du-projet)
-  - [bins](#bins)
-  - [inginious](#inginious)
-  - [measures](#measures)
-  - [performances](#performances)
-  - [src](#src)
+  - [\*\*bins](#bins)
+  - [**inginious**](#inginious)
+  - [**measures**](#measures)
+  - [**performances**](#performances)
+  - [**src**](#src)
 
 # Utilisation
 
-## Prérequis
+## **Prérequis**
 * **make** : pour la compilation du programme
 * **gcc** : pour la compilation du programme
 * **python3** : pour exécuter les scripts python
 * **valgrind** : pour exécuter les commandes de vérification
 
-## Lister les commandes
+## **Lister les commandes**
 ```sh
 make help
 ```
 liste les différentes actions possibles à l'aide de make à utiliser en remplacant help par le mot-clé
 # Structure du Projet
-## **bins**
+## **bins
 Ce dossier contient tous les exécutables binaires générés
 ## **inginious**
 Ce dossier contient :
