@@ -52,6 +52,7 @@ void *writes(void *data){
         // modification du nombre de writer actifs
         // section critique donc on lock
         tts_lock(&lock_wcount);
+        writercount--;
         if (writercount == 0){new_post(&rsem);} // dernier writer --> on libère les readers
         tts_unlock(&lock_wcount);
         // fin de la section critique
