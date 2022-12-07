@@ -128,6 +128,12 @@ verify_tts: src/test_and_test_and_set.c
 	cppcheck src/test_and_test_and_set.c
 	valgrind ./bins/test_and_test_and_set $(LOCKER)
 
+# Launch the experiments scirpt
+experiments: bins/*
+	@echo "Launching experiments... "
+	@./experiments.sh
+	@echo "Done."
+
 # Make zip for inginious tests
 zip_for_measures:
 	@ zip -r project.zip . -x "*.git*" -x "*.pdf" -x"*.md" -x "*.code-workspace" -x "project.zip*" -x "inginious/*" -x ".vscode/*" -x "measures/*" -x "plots/*"

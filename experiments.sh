@@ -17,15 +17,15 @@ make compile -s
 
 # Print CSV files in the 
 echo "philosophes_ingi.csv"
-cat performances/philosophes_ingi.csv
+cat philosophes_ingi.csv
 echo ""
 
 echo "producer_consumer_ingi.csv"
-cat performances/producer_consumer_ingi.csv
+cat producer_consumer_ingi.csv
 echo ""
 
 echo "reader_writer_ingi.csv"
-cat performances/reader_writer_ingi.csv
+cat reader_writer_ingi.csv
 echo ""
 
 # Collect the time for task lockers
@@ -34,11 +34,11 @@ echo ""
 
 # Print CSV files in the
 echo "test_and_set.csv"
-cat performances/test_and_set_ingi.csv
+cat test_and_set_ingi.csv
 echo ""
 
 echo "test_and_test_and_set.csv"
-cat performances/test_and_test_and_set_ingi.csv
+cat test_and_test_and_set_ingi.csv
 echo ""
 
 # Collect the time for task 3
@@ -48,15 +48,15 @@ echo ""
 
 # Print CSV files in the
 echo "philosophes_tts_ingi.csv"
-cat performances/philosophes_tts_ingi.csv
+cat philosophes_tts_ingi.csv
 echo ""
 
 echo "producer_consumer_tts_ingi.csv"
-cat performances/producer_consumer_tts_ingi.csv
+cat producer_consumer_tts_ingi.csv
 echo ""
 
 echo "reader_writer_tts_ingi.csv"
-cat performances/reader_writer_tts_ingi.csv
+cat reader_writer_tts_ingi.csv
 echo ""
 
 # Clean all files
