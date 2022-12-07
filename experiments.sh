@@ -9,7 +9,6 @@
 # Compile the program
 make compile -s
 
-<<comment
 # Collect the time for task 1
 ./performances/time_measures.sh philosophes_ingi.csv bins/philosophes
 ./performances/time_measures.sh producer_consumer_ingi.csv bins/producer_consumer
@@ -40,7 +39,6 @@ echo ""
 echo "test_and_test_and_set.csv"
 cat performances/test_and_test_and_set_ingi.csv
 echo ""
-comment
 
 # Collect the time for task 3
 ./performances/time_measures.sh philosophes_tts_ingi.csv bins/philosophes_tts
