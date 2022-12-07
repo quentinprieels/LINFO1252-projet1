@@ -1,5 +1,6 @@
 # linfo1252-projet1
-Projet réalisé dans le cadre du cours LINFO1252 - Systèmes Informatiques par Quentin Prieels et Nathan Zeep (mercredi, groupe : 26)
+Projet réalisé dans le cadre du cours LINFO1252 - Systèmes Informatiques par le groupe 26 (mercredi)
+Quentin Prieels (57162000) & Nathan Zeep (24622000)
 
 # Index
 - [linfo1252-projet1](#linfo1252-projet1)
