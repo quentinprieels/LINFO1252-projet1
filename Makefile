@@ -43,6 +43,8 @@ measure: performances/time_measures.sh performances/plot_measures.py
 	@./performances/time_measures.sh philosophes_tts.csv bins/philosophes_tts
 	@echo "Launching local measure for producer_consumer tts."
 	@./performances/time_measures.sh producer_consumer_tts.csv bins/producer_consumer_tts
+	@echo "Launching local measure for reader_writer tts."
+	@./performances/time_measures.sh reader_writer_tts.csv bins/reader_writer_tts
 
 # Plotting performances
 plot: performances/plot_measures.py
@@ -134,7 +136,12 @@ final_plot:
 	@python3 performances/plot_measures.py performances/philosophes_ingi.csv,performances/philosophes-tts_ingi.csv performances/philosophes_vs_tts.pdf line
 	@python3 performances/plot_measures.py performances/producer-consumer_ingi.csv,performances/producer-consumer-tts_ingi.csv performances/producer_consumer_vs_tts.pdf line
 	@python3 performances/plot_measures.py performances/reader-writer_ingi.csv,performances/reader-writer-tts_ingi.csv performances/reader_writer_vs_tts.pdf line
+	@python3 performances/plot_measures.py performances/test-and-test-and-set_ingi.csv,performances/test-and-set_ingi.csv performances/ts_and_tts.pdf multiple
 
+final_plot_vs: performances/plot_time.py
+	python3 performances/plot_time.py performances/philosophes_ingi.csv performances/philosophes-tts_ingi.csv performances/philosophes_vs_tts.pdf
+	python3 performances/plot_time.py performances/producer-consumer_ingi.csv performances/producer-consumer-tts_ingi.csv performances/producer_consumer_vs_tts.pdf
+	python3 performances/plot_time.py performances/reader-writer_ingi.csv performances/reader-writer-tts_ingi.csv performances/reader_writer_vs_tts.pdf
 
 # Compile the pdf report
 pdf: report/compile.sh
