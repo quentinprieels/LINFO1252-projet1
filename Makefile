@@ -23,10 +23,14 @@ compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c src/test_
 
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes_tts src/philosophes_tts.c src/locker.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer_tts src/producer_consumer_tts.c src/buffer.c src/locker.c src/new_semaphore.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer_tts src/reader_writer_tts.c src/new_semaphore.c
+
 
 	./bins/philosophes_tts $(PHILO-THREADS)
 	./bins/producer_consumer $(PRODUCER-THREADS) $(CONSUMER-THREADS)
 	./bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
+	./bins/reader_writer $(READERS-THREADS) $(READERS-THREADS)
+	./bins/reader_writer_tts $(READERS-THREADS) $(READERS-THREADS)
 
 # Make local tests and graphs
 local: performances/time_measures.sh performances/plot_measures.py
@@ -94,6 +98,12 @@ debug_prod_cons_tts: src/producer_consumer_tts.c
 	# valgrind ./bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
 	# cppcheck src/producer_consumer_tts.c
 	./bins/producer_consumer_tts $(PRODUCER-THREADS) $(CONSUMER-THREADS)
+
+debug_read_write_tts: src/reader_writer_tts.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer_tts src/reader_writer_tts.c
+	gdb --args bins/reader_writer_tts $(WRITER-THREADS) $(READERS-THREADS)
+	valgrind ./bins/reader_writer_tts $(WRITER-THREADS) $(READERS-THREADS)
+	cppcheck src/reader_writer_tts.c
 
 # Compile the pdf report
 pdf: report/compile.sh

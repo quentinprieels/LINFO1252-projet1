@@ -52,7 +52,7 @@ void *writes(void *data){
         // modification du nombre de writer actifs
         // section critique donc on lock
         tts_lock(&lock_wcount);
-        if (writercount == 0){sem_post(&rsem);} // dernier writer --> on libère les readers
+        if (writercount == 0){new_post(&rsem);} // dernier writer --> on libère les readers
         tts_unlock(&lock_wcount);
         // fin de la section critique
 
@@ -117,8 +117,8 @@ int main(int argc, char const *argv[]){
     lock_wsecurity = 0;
     
     //initialisation des sémaphores
-    new_semaphore_init(&wsem, 1)
-    new_semaphore_init(&rsem, 1)
+    new_semaphore_init(&wsem, 1);
+    new_semaphore_init(&rsem, 1);
 
     //initialiser les writers
     int towrite = towrite_tot / nbr_writers;
@@ -165,8 +165,8 @@ int main(int argc, char const *argv[]){
     //destruction des mutex n'est plus nécessaire
     
     //destruction des sémaphores
-    sem_destroy(&wsem);
-    sem_destroy(&rsem);
+    new_semaphore_destroy(&wsem);
+    new_semaphore_destroy(&rsem);
 
     exit(EXIT_SUCCESS);
 }
