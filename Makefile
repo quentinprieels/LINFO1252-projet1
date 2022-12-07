@@ -158,6 +158,7 @@ help:
 	@echo "compile : compile tous les fichiers relatifs aux questions"
 	@echo "ingi : crée les plots relatifs aux mesures retournées par inginious"
 	@echo "local : crée les plots relatifs aux mesures faites en local"
+	@echo "local_vs_ingi : crée les plots relatifs aux mesures faites en local et sur inginious. Nécessite un appel à ingi et local avant."
 	@echo "verify : vérifie les potentielles fuites mémoires"
 	@echo "experiments : lance le script experiments.sh"
 	@echo "zip_for_measures : crée une archive zip utilisée pour les mesures sur inginious"
