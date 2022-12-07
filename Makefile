@@ -62,7 +62,7 @@ plot: performances/plot_measures.py
 	@echo "Plotting local performances for second task."
 	@python3 performances/plot_measures.py performances/philosophes_tts.csv performances/philosophes_tts.pdf
 	@python3 performances/plot_measures.py performances/producer_consumer_tts.csv performances/producer_consumer_tts.pdf
-	# @python3 performances/plot_measures.py performances/reader_writer_tts.csv performances/reader_writer_tts.pdf
+	@python3 performances/plot_measures.py performances/reader_writer_tts.csv performances/reader_writer_tts.pdf
 
 # All plot in local tests
 local:

@@ -46,10 +46,10 @@ if type == "same":
         ax.set_xscale('log', base=2)
         ax.set_ylim(bottom=-5)  
         plt.grid(True)
+        fig.set_figwidth(7)
 else :
     # On change la taille de la figure pour que ce soit plus joli + on cache le gros plot qui contient tous les subplots
-    fig.set_figwidth(n*5)
-    fig.set_figheight(5)
+    fig.set_figwidth(n*7)
     ax.spines['top'].set_color('none')
     ax.spines['bottom'].set_color('none')
     ax.spines['left'].set_color('none')
@@ -61,11 +61,12 @@ else :
         axi = fig.add_subplot(1, n, i+1)
         axi.errorbar(dfs[i]['nbr_threads'], dfs[i]['means']*1000, yerr=dfs[i]['stds']*1000, ecolor='red', linestyle='None', marker='.', markeredgewidth=2.5, capsize=5, capthick=1)
         axi.set_xscale('log', base=2)
-        axi.set_ylim(bottom=0)
+        axi.set_ylim(bottom=-5)
         axi.grid(True)
-        axi.set_title(filenames[i].split('/')[-1].rstrip('.csv'))
+        # axi.set_title(filenames[i].split('/')[-1].rstrip('.csv'))
 
 # Plot parameters
+fig.set_figheight(5)
 fig.tight_layout()
 ax.set_xlabel('Number of threads [#]')
 ax.set_ylabel('Time [ms]')
