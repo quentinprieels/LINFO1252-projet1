@@ -138,10 +138,14 @@ final_plot:
 	@python3 performances/plot_measures.py performances/reader-writer_ingi.csv,performances/reader-writer-tts_ingi.csv performances/reader_writer_vs_tts.pdf line
 	@python3 performances/plot_measures.py performances/test-and-test-and-set_ingi.csv,performances/test-and-set_ingi.csv performances/ts_and_tts.pdf multiple
 
-final_plot_vs: performances/plot_time.py
-	python3 performances/plot_time.py performances/philosophes_ingi.csv performances/philosophes-tts_ingi.csv performances/philosophes_vs_tts.pdf
-	python3 performances/plot_time.py performances/producer-consumer_ingi.csv performances/producer-consumer-tts_ingi.csv performances/producer_consumer_vs_tts.pdf
-	python3 performances/plot_time.py performances/reader-writer_ingi.csv performances/reader-writer-tts_ingi.csv performances/reader_writer_vs_tts.pdf
+plot_tts_local: performances/plot_compare.py
+	@python3 performances/plot_compare.py performances/test_and_set.csv performances/test-and-set_ingi.csv performances/ts_local_vs_ingi.pdf
+	@python3 performances/plot_compare.py performances/test_and_test_and_set.csv performances/test-and-test-and-set_ingi.csv performances/tts_local_vs_ingi.pdf
+
+plot_vs_tts: performances/plot_time.py
+	python3 performances/plot_duo.py performances/philosophes_ingi.csv performances/philosophes-tts_ingi.csv performances/philosophes_vs_tts.pdf
+	python3 performances/plot_duo.py performances/producer-consumer_ingi.csv performances/producer-consumer-tts_ingi.csv performances/producer_consumer_vs_tts.pdf
+	python3 performances/plot_duo.py performances/reader-writer_ingi.csv performances/reader-writer-tts_ingi.csv performances/reader_writer_vs_tts.pdf
 
 # Compile the pdf report
 pdf: report/compile.sh
