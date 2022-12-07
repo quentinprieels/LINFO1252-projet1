@@ -1,11 +1,22 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+This script plots the measures of permoformance of two files into one plot with sublots.
+Each suplot have the mean and the standard deviation of the measures.
+
+USAGE:   python3 plot_subplot.py <performance_files_1> <performance_file_2> <output_file> 
+EXAMPLE: python3 plot_measures.py performance1.csv performance2.csv performances.pdf
+"""
 import sys
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# Reading arguments
 file1 = sys.argv[1]
 file2 = sys.argv[2]
 outfile = sys.argv[3]
 
+# Create dataframes and include mean and std
 df1 = pd.read_csv(file1, sep=',')
 df2 = pd.read_csv(file2, sep=',')
 
@@ -13,6 +24,7 @@ for df in [df1, df2]:
     df['means'] = df.drop('nbr_threads', axis=1).mean(axis=1)
     df['stds'] = df.drop(['nbr_threads', 'means'], axis=1).std(axis=1)
 
+# Plot
 fig = plt.figure()
 fig.set_figheight(6)
 fig.set_figwidth(10)
@@ -35,4 +47,3 @@ plt.xscale('log', base=2)
 plt.ylim(-5, 1000*max(df1['means'].max() + df1['stds'].max(), df2['means'].max() + df2['stds'].max())*1.05)
 
 plt.savefig(outfile, bbox_inches='tight')
-#plt.show()

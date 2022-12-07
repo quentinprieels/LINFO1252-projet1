@@ -9,6 +9,7 @@
 # Compile the program
 make compile -s
 
+
 # Collect the time for task 1
 ./performances/time_measures.sh philosophes_ingi.csv bins/philosophes
 ./performances/time_measures.sh producer_consumer_ingi.csv bins/producer_consumer

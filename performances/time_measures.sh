@@ -60,5 +60,4 @@ for i in ${THREAD_SEQ[@]}; do
 done
 
 # ==========    Clear the output    ==========
-mv $FILE performances/$FILE
 exit 0
