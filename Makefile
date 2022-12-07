@@ -23,7 +23,7 @@ compile: src/philosophes.c src/producer_consumer.c src/reader_writer.c src/test_
 
 	$(CC) $(CFLAGS) $(THREADS) -o bins/philosophes_tts src/philosophes_tts.c src/locker.c
 	$(CC) $(CFLAGS) $(THREADS) -o bins/producer_consumer_tts src/producer_consumer_tts.c src/buffer.c src/locker.c src/new_semaphore.c
-	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer_tts src/reader_writer_tts.c src/new_semaphore.c
+	$(CC) $(CFLAGS) $(THREADS) -o bins/reader_writer_tts src/reader_writer_tts.c src/locker.c src/new_semaphore.c
 
 
 	./bins/philosophes_tts $(PHILO-THREADS)
