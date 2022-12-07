@@ -134,7 +134,7 @@ zip_for_measures:
 
 # Make zip for inginious tests
 zip_for_ingi:
-	@ zip -r project.zip . -x "*.git*" -x "consignes.pdf" -x "project.zip*" -x "create_zip.sh*" -x ".vscode/*"
+	@ zip -r project.zip . -x "*.git*" -x "consignes.pdf" -x "project.zip*" -x ".vscode/*"
 
 # Clean the project
 clean:
